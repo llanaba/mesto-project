@@ -1,0 +1,10 @@
+.profile__description {
+  outline: 1px solid yellow;
+  margin-top: 14px;
+}
+
+@media all and (min-width: 768px) {
+  .profile__description {
+    margin-top: 16px;
+  }
+}

@@ -2,8 +2,20 @@
 @import url(../vendor/fonts.css);
 @import url(../blocks/page/page.css);
 @import url(../blocks/page/__header/page__header.css);
+@import url(../blocks/page/__content/page__content.css);
 @import url(../blocks/page/__footer/page__footer.css);
 @import url(../blocks/header/header.css);
 @import url(../blocks/header/__logo/header__logo.css);
+@import url(../blocks/content/content.css);
+@import url(../blocks/profile/profile.css);
+@import url(../blocks/profile/__avatar/profile__avatar.css);
+@import url(../blocks/profile/__info/profile__info.css);
+@import url(../blocks/profile/__info-main/profile__info-main.css);
+@import url(../blocks/profile/__description/profile__description.css);
+@import url(../blocks/profile/__button-add-container/profile__button-add-container.css);
+@import url(../blocks/profile/__button-add/profile__button-add.css);
+@import url(../blocks/cards/cards.css);
+@import url(../blocks/cards/__list/cards__list.css);
+@import url(../blocks/card/card.css);
 @import url(../blocks/footer/footer.css);
 

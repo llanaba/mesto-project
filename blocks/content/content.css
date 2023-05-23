@@ -1,0 +1,18 @@
+.content {
+  outline: 1px dashed darkorange;
+  max-width: 282px;
+}
+
+
+@media all and (min-width: 768px) {
+  .content {
+    max-width: 581px;
+  }
+}
+
+
+@media all and (min-width: 915px) {
+  .content {
+    max-width: 880px;
+  }
+}

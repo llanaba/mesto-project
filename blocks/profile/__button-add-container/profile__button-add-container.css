@@ -1,0 +1,12 @@
+.profile__button-add-container {
+  outline: 1px dashed azure;
+  margin-top: 36px;
+  display: flex;
+  align-items: center;
+}
+
+@media all and (min-width: 768px) {
+  .profile__button-add-container {
+    margin-top: 0;
+  }
+}
