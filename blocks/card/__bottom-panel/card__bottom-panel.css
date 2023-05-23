@@ -1,0 +1,8 @@
+.card__bottom-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  height: 80px;
+  border-radius: 0 0 10px 10px;
+}

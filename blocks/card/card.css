@@ -1,5 +1,9 @@
 .card {
-  outline: 1px solid honeydew;
+  display: flex;
+  flex-direction: column;
   width: 282px;
   height: 361px;
+  border-radius: 10px;
+  background-color: #fff;
+  color: #000;
 }
