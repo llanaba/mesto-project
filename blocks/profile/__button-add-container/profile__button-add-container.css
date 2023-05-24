@@ -1,7 +1,11 @@
 .profile__button-add-container {
-  outline: 1px dashed azure;
+  box-sizing: border-box;
+  border: 2px solid white;
+  width: 100%;
+  height: 50px;
   margin-top: 36px;
   display: flex;
+  justify-content: center;
   align-items: center;
 }
 

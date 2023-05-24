@@ -1,5 +1,7 @@
 .profile__info-main {
+  outline: 1px solid white;
   display: flex;
+  align-items: center;
   gap: 10px;
 }
 
@@ -9,3 +11,18 @@
 
   }
 }
+
+/* .profile__info-main {
+  outline: 1px solid white;
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  align-items: center;
+  gap: 10px;
+}
+
+@media all and (min-width: 768px) {
+  .profile__info-main {
+    gap: 18px;
+
+  }
+} */
