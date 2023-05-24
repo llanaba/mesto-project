@@ -1,0 +1,19 @@
+.divider {
+  margin: 0 auto;
+  border: 1px 0 0;
+  border-style: solid;
+  border-color: #545454;
+  width: 100%;
+}
+
+@media all and (min-width: 768px) {
+  .divider {
+    max-width: 611px;
+  }
+}
+
+  @media all and (min-width: 920px) {
+  .divider {
+    max-width: 880px;
+  }
+}
