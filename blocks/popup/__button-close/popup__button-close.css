@@ -16,8 +16,3 @@
     right: -42px;
   }
 }
-
-.popup__button-close:hover {
-  opacity: 0.6;
-  cursor: pointer;
-}

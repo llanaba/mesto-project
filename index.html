@@ -23,7 +23,7 @@
           Исследователь океана
         </p>
       </div>
-      <div class="profile__button-add-container">
+      <div class="button profile__button-add-container">
         <button class="button profile__button-add" type="button"></button>
       </div>
     </section>
@@ -54,7 +54,7 @@
           <img src="images/elements-finland.png" class="card__image" alt="Изображение дерева в парке Пюхя-Луосто">
           <div class="card__bottom-panel">
             <p class="card__text">Пюхя-Луосто</p>
-            <button type="button" class="button card__button-like"></button>
+            <button type="button" class="button card__button-like card__button-like_active"></button>
           </div>
         </li>
         <li class="card">
@@ -77,10 +77,13 @@
   <footer class="page__section footer">
     &#169; 2020 Mesto Russia
   </footer>
-  <div class="popup popup_opened page__section">
+  <!-- <div class="popup popup_opened page__section"> -->
+  <div class="popup page__section">
     <div class="popup__container">
       <button type="button" class="button popup__button-close"></button>
-      <div class="popup__form-container">Контейнер для формы</div>
+      <h2 class="popup__form-title">Редактировать профиль</h2>
+      <div>Форма</div>
+      <button type="submit" class="button popup__button-save">Сохранить</button>
     </div>
   </div>
 </body>

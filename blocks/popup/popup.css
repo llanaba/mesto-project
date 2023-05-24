@@ -3,7 +3,6 @@
   /* display: flex; note: свойство подключается модификатором popup_opened */
   outline: 3px dotted white;
   background-color: rgba(0, 0, 0, 0.5);
-  /* background-color: rgba(21, 111, 163, 0.8); */
   position: fixed;
   top: 0;
   width: 100%;

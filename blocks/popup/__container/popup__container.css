@@ -1,5 +1,8 @@
 .popup__container {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   width: 282px;
   min-height: 322px;
   box-sizing: border-box;
