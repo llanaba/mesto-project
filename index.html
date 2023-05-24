@@ -23,9 +23,7 @@
           Исследователь океана
         </p>
       </div>
-      <div class="button profile__button-add-container">
-        <button class="button profile__button-add" type="button"></button>
-      </div>
+      <button class="button profile__button-add" type="button"></button>
     </section>
     <section class="cards" aria-label="Секция с фотографиями">
       <ul class="cards__list">
@@ -77,15 +75,15 @@
   <footer class="page__section footer">
     &#169; 2020 Mesto Russia
   </footer>
-  <div class="popup popup_opened page__section">
-  <!-- <div class="popup page__section"> -->
-    <div class="popup__container">
+  <!-- <div class="popup page__section popup_opened"> -->
+  <div class="popup page__section">
+    <div class="form">
       <button type="button" class="button popup__button-close"></button>
-      <h2 class="popup__form-title">Редактировать профиль</h2>
-      <form class="form">
+      <h2 class="form__title">Редактировать профиль</h2>
+      <fieldset class="form__input-container">
           <input type="text" class="form__input-text" value="Жак-Ив Кусто">
           <input type="text" class="form__input-text" value="Исследователь океана">
-      </form>
+      </fieldset>
       <button type="submit" class="button popup__button-save">Сохранить</button>
     </div>
   </div>
