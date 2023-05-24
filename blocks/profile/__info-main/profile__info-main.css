@@ -1,0 +1,11 @@
+.profile__info-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@media all and (min-width: 768px) {
+  .profile__info-main {
+    gap: 18px;
+  }
+}
