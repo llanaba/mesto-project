@@ -4,3 +4,8 @@
   background-color: transparent;
   background-repeat: no-repeat;
 }
+
+.button:hover {
+  opacity: 0.6;
+  cursor: pointer;
+}
