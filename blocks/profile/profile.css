@@ -10,7 +10,6 @@
   .profile {
     display: grid;
     gap: 30px;
-    justify-content: center;
     grid-template-columns: 120px minmax(30px, 550px) 150px;
   }
 }
