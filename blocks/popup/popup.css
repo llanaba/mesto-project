@@ -1,7 +1,6 @@
 .popup {
   display: none;
   /* display: flex; note: свойство подключается модификатором popup_opened */
-  outline: 3px dotted white;
   background-color: rgba(0, 0, 0, 0.5);
   position: fixed;
   top: 0;

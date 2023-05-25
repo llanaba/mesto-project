@@ -1,5 +1,6 @@
 .header {
   padding: 28px 28px 38px;
+  border-bottom: 1px solid rgb(84, 84, 84, 0.7);
 }
 
 @media all and (min-width: 768px) {
