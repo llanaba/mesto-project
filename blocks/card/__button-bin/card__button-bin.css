@@ -1,0 +1,12 @@
+.card__button-bin {
+    background-image: url(../../../images/button-bin.svg);
+    width: 18px;
+    height: 19px;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+  }
+
+  .card__button-bin:hover {
+    opacity: 0.6;
+  }
