@@ -1,0 +1,13 @@
+.figure__image {
+  height: 299px;
+  max-width: 240px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+@media all and (min-width: 920px) {
+  .figure__image {
+    height: 540px;
+    max-width: 850px;
+  }
+}

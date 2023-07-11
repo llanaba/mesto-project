@@ -24,48 +24,59 @@
     </section>
     <section class="cards" aria-label="Секция с фотографиями">
       <ul class="cards__list">
-        <li class="card">
+        <template id="card">
+          <li class="card">
+            <button type="button" class="button card__button-bin" aria-label="Удалить карточку"></button>
+            <img src="" class="card__image" alt="Пользовательская фотография места">
+            <div class="card__bottom-panel">
+              <h2 class="card__text"></h2>
+              <button type="button" class="button card__button-like" aria-label="Поставить лайк"></button>
+            </div>
+          </li>
+        </template>
+        <!-- <li class="card">
+          <button type="button" class="button card__button-bin" aria-label="Удалить карточку"></button>
           <img src="images/elements-dombay.png" class="card__image" alt="Изображение Домбая">
           <div class="card__bottom-panel">
-            <h2 class="card__text">Домбай</h2>
+            <h2 class="card__text">Домбаsй</h2>
             <button type="button" class="button card__button-like" aria-label="Поставить лайк"></button>
           </div>
-        </li>
-        <li class="card">
+        </li> -->
+        <!-- <li class="card">
           <img src="images/elements-elbrus.png" class="card__image" alt="Изображение Эльбруса">
           <div class="card__bottom-panel">
             <h2 class="card__text">Эльбрус</h2>
             <button type="button" class="button card__button-like" aria-label="Поставить лайк"></button>
           </div>
-        </li>
-        <li class="card">
+        </li> -->
+        <!-- <li class="card">
           <img src="images/elements-karachaevsk.jpeg" class="card__image" alt="Изображение Карачаевска">
           <div class="card__bottom-panel">
             <h2 class="card__text">Карачаево-Черкессия</h2>
             <button type="button" class="button card__button-like" aria-label="Поставить лайк"></button>
           </div>
-        </li>
-        <li class="card">
+        </li> -->
+        <!-- <li class="card">
           <img src="images/elements-finland.png" class="card__image" alt="Изображение дерева в парке Пюхя-Луосто">
           <div class="card__bottom-panel">
             <h2 class="card__text">Пюхя-Луосто</h2>
             <button type="button" class="button card__button-like card__button-like_active" aria-label="Поставить лайк"></button>
           </div>
-        </li>
-        <li class="card">
+        </li> -->
+        <!-- <li class="card">
           <img src="images/elements-magadan.png" class="card__image" alt="Изображение Магадана">
           <div class="card__bottom-panel">
             <h2 class="card__text">Магадан</h2>
             <button type="button" class="button card__button-like" aria-label="Поставить лайк"></button>
           </div>
-        </li>
-        <li class="card">
+        </li> -->
+        <!-- <li class="card">
           <img src="images/elements-yaroslavl.png" class="card__image" alt="Изображение Ярославля">
           <div class="card__bottom-panel">
             <h2 class="card__text">Ярославль</h2>
             <button type="button" class="button card__button-like" aria-label="Поставить лайк"></button>
           </div>
-        </li>
+        </li> -->
       </ul>
     </section>
   </main>
@@ -74,11 +85,10 @@
       &#169; 2020 Mesto Russia
     </p>
   </footer>
-  <div class="popup page__section">
-  <!-- <div class="popup page__section"> -->
+  <div class="popup page__section popup_edit-profile">
     <div class="popup__container">
       <button type="button" class="button popup__button-close" aria-label="Закрыть"></button>
-      <form name="edit-form" class="form">
+      <form name="edit-profile-form" class="form">
         <h2 class="form__title">Редактировать профиль</h2>
         <fieldset class="form__input-container">
             <input type="text" class="form__input-text" name="user-name">
@@ -88,6 +98,33 @@
       </form>
     </div>
   </div>
+  <div class="popup page__section popup_add-card">
+      <div class="popup__container">
+        <button type="button" class="button popup__button-close" aria-label="Закрыть"></button>
+        <form name="new-card-form" class="form">
+          <h2 class="form__title">Новое место</h2>
+          <fieldset class="form__input-container">
+              <input type="text" class="form__input-text" name="place-name" placeholder="Название">
+              <input type="text" class="form__input-text" name="place-link" placeholder="Ссылка на картинку">
+          </fieldset>
+          <button type="submit" class="button popup__button-save">Создать</button>
+        </form>
+      </div>
+    </div>
+    <div class="popup page__section popup_view-image">
+    <template id="image">
+      <div class="popup__container popup__container_fullscreen">
+        <button type="button" class="button popup__button-close" aria-label="Закрыть"></button>
+          <figure class="figure">
+            <img src="" class="figure__image" alt="Пользовательская фотография">
+            <!-- <img src="https://mymodernmet.com/wp/wp-content/uploads/2020/07/elephant-1.jpg" class="figure__image" alt="Изображение слоников"> -->
+            <!-- <img src="images/small-pic.png" class="figure__image" alt="Изображение Магадана"> -->
+            <!-- <img class="figure__image" src="https://news.artnet.com/app/news-upload/2021/11/4126_10706281_0.jpg"> -->
+            <figcaption class="figure__caption"></figcaption>
+          </figure>
+        </div>
+      </template>
+    </div>
   <script src="pages/index.js"></script>
 </body>
 </html>
