@@ -31,8 +31,12 @@ function addExistingCards(cardList) {
       name: cardList[i]['name'],
       link: cardList[i]['link']
     }
-    createCard(cardData)
+    renderCard(cardData);
   }
+}
+
+function renderCard(cardData) {
+  existingCards.prepend(createCard(cardData))
 }
 
 function createCard(cardData) {
@@ -47,7 +51,7 @@ function createCard(cardData) {
   cardImageElement.addEventListener('click', function() {
     viewImagePopup(cardImageElement.src, cardElement.querySelector('h2'));
   });
-  existingCards.prepend(cardElement);
+  return cardElement
 }
 
 function handleRemoveCardClick(evt) {
@@ -93,10 +97,7 @@ function handleCardFormSubmit(evt) {
   closeAddCardPopup();
 }
 
-
-
 function viewImagePopup(imgLink, caption) {
-  console.log(imgLink);
   const imageElement = cardImageTemplate.querySelector('.popup__container_fullscreen').cloneNode(true);
   imageElement.querySelector('figcaption').textContent = caption.textContent;
   imageElement.querySelector('.figure__image').src = imgLink;
