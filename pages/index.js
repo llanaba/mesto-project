@@ -6,11 +6,6 @@ const popupViewImage = document.querySelector('.popup_view-image');
 // Edit profile buttons
 const editProfileButton = document.querySelector('.profile__button-edit');
 const closeProfileButton = popupProfileEdit.querySelector('.popup__button-close');
-const saveProfileButton = popupProfileEdit.querySelector('.popup__button-save');
-
-editProfileButton.addEventListener('click', editProfilePopup);
-closeProfileButton.addEventListener('click', closeEditProfilePopup);
-saveProfileButton.addEventListener('click', handleFormSubmit);
 
 // Edit profile form, fields and values
 const editProfileForm = document.querySelector('form[name="edit-profile-form"]');
@@ -20,17 +15,15 @@ const userName = document.querySelector('h1.profile__name');
 const userDescription = document.querySelector('p.profile__description');
 
 // Adding card buttons and template
+const addCardForm = document.querySelector('form[name="new-card-form"]');
 const cardTemplate = document.querySelector('#card').content;
 const cardImageTemplate = document.querySelector('#image').content;
 const addCardButton = document.querySelector('.profile__button-add');
 const closeAddCardButton = popupAddCard.querySelector('.popup__button-close');
-const saveAddCardButton = popupAddCard.querySelector('.popup__button-save');
 const placeInput = popupAddCard.querySelector('input[name="place-name"]');
 const imgLinkInput = popupAddCard.querySelector('input[name="place-link"]');
 
-addCardButton.addEventListener('click', addCardPopup);
-closeAddCardButton.addEventListener('click', closeAddCardPopup);
-saveAddCardButton.addEventListener('click', handleCardFormSubmit);
+const existingCards = document.querySelector('.cards__list');
 
 const initialCards = [
   {
@@ -58,9 +51,6 @@ const initialCards = [
     link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg'
   }
 ];
-
-const existingCards = document.querySelector('.cards__list');
-addExistingCards(initialCards);
 
 function addExistingCards(cardList) {
   for (let i = 0; i < cardList.length; i++) {
@@ -134,3 +124,14 @@ function viewImagePopup(imgLink, caption) {
   popupViewImage.appendChild(imageElement);
   popupViewImage.classList.add('popup_opened');
 }
+
+// Buttons and forms listeners
+editProfileButton.addEventListener('click', editProfilePopup);
+closeProfileButton.addEventListener('click', closeEditProfilePopup);
+editProfileForm.addEventListener('submit', handleFormSubmit);
+
+addCardButton.addEventListener('click', addCardPopup);
+closeAddCardButton.addEventListener('click', closeAddCardPopup);
+addCardForm.addEventListener('submit', handleCardFormSubmit);
+
+addExistingCards(initialCards);
