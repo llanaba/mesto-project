@@ -27,14 +27,21 @@ const existingCards = document.querySelector('.cards__list');
 
 function addExistingCards(cardList) {
   for (let i = 0; i < cardList.length; i++) {
-    addCard(cardList[i]['name'], cardList[i]['link']);
+    const cardData = {
+      name: cardList[i]['name'],
+      link: cardList[i]['link']
+    }
+    // createCard(cardList[i]['name'], cardList[i]['link']);
+    createCard(cardData)
   }
 }
 
-function addCard(name, link) {
+function createCard(cardData) {
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
-  cardElement.querySelector('h2').textContent = name;
-  cardElement.querySelector('.card__image').src = link;
+  // cardElement.querySelector('h2').textContent = name;
+  cardElement.querySelector('h2').textContent = cardData.name;
+  // cardElement.querySelector('.card__image').src = link;
+  cardElement.querySelector('.card__image').src = cardData.link;
   let cardImageElement = cardElement.querySelector('.card__image');
   let buttonLikeElement = cardElement.querySelector('.card__button-like');
   let buttonBinElement = cardElement.querySelector('.card__button-bin');
@@ -52,6 +59,27 @@ function addCard(name, link) {
   existingCards.prepend(cardElement);
 }
 
+// function createCard(name, link) {
+//   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
+//   cardElement.querySelector('h2').textContent = name;
+//   cardElement.querySelector('.card__image').src = link;
+//   let cardImageElement = cardElement.querySelector('.card__image');
+//   let buttonLikeElement = cardElement.querySelector('.card__button-like');
+//   let buttonBinElement = cardElement.querySelector('.card__button-bin');
+//   buttonLikeElement.addEventListener('click', function(evt) {
+//     evt.target.classList.toggle('card__button-like_active');
+//   })
+//   buttonBinElement.addEventListener('click', function(evt) {
+//     let binButton = evt.target
+//     let binCard = binButton.parentElement;
+//     binCard.remove();
+//   })
+//   cardImageElement.addEventListener('click', function() {
+//     viewImagePopup(cardImageElement.src, cardElement.querySelector('h2'));
+//   });
+//   existingCards.prepend(cardElement);
+// }
+
 function closeEditProfilePopup() {
   popupProfileEdit.classList.remove('popup_opened');
 }
@@ -63,7 +91,6 @@ function editProfilePopup() {
 }
 
 function handleFormSubmit(evt) {
-  console.log('Im here')
   evt.preventDefault();
   userName.textContent = nameInput.value;
   userDescription.textContent = descriptionInput.value;
@@ -80,7 +107,12 @@ function closeAddCardPopup() {
 
 function handleCardFormSubmit(evt) {
   evt.preventDefault();
-  addCard(placeInput.value, imgLinkInput.value);
+  const cardData = {
+    name: placeInput.value,
+    link: imgLinkInput.value
+  }
+  // createCard(placeInput.value, imgLinkInput.value);
+  createCard(cardData);
   closeAddCardPopup();
 }
 
