@@ -41,15 +41,18 @@ function renderCard(cardData) {
 
 function createCard(cardData) {
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
-  cardElement.querySelector('h2').textContent = cardData.name;
-  cardElement.querySelector('.card__image').src = cardData.link;
+  const cardTitleElement = cardElement.querySelector('h2');
   const cardImageElement = cardElement.querySelector('.card__image');
   const buttonLikeElement = cardElement.querySelector('.card__button-like');
   const buttonBinElement = cardElement.querySelector('.card__button-bin');
+
+  cardTitleElement.textContent = cardData.name;
+  cardImageElement.src = cardData.link;
+
   buttonLikeElement.addEventListener('click', handleLikeClick);
   buttonBinElement.addEventListener('click', handleRemoveCardClick);
   cardImageElement.addEventListener('click', function() {
-    viewImagePopup(cardImageElement.src, cardElement.querySelector('h2'));
+    handleViewImageClick(cardImageElement.src, cardTitleElement);
   });
   return cardElement
 }
@@ -62,30 +65,40 @@ function handleLikeClick(evt) {
   evt.target.classList.toggle('card__button-like_active');
 }
 
-function closeEditProfilePopup() {
-  popupProfileEdit.classList.remove('popup_opened');
+function closePopup(popup) {
+  popup.classList.remove('popup_opened');
 }
 
-function editProfilePopup() {
+function openPopup(popup) {
+  popup.classList.add('popup_opened');
+}
+
+function handleEditProfileClick() {
   nameInput.value = userName.textContent;
   descriptionInput.value = userDescription.textContent;
-  popupProfileEdit.classList.add('popup_opened');
+  openPopup(popupProfileEdit);
 }
 
-function handleFormSubmit(evt) {
+function handleCloseEditProfileClick() {
+  closePopup(popupProfileEdit);
+}
+
+function handleEditProfileFormSubmit(evt) {
   evt.preventDefault();
   userName.textContent = nameInput.value;
   userDescription.textContent = descriptionInput.value;
-  closeEditProfilePopup();
+  closePopup(popupProfileEdit);
 }
 
-function addCardPopup() {
-  popupAddCard.classList.add('popup_opened');
+function handleCloseAddCardClick() {
+  closePopup(popupAddCard);
 }
 
-function closeAddCardPopup() {
-  popupAddCard.classList.remove('popup_opened');
+
+function handleAddCardClick() {
+  openPopup(popupAddCard);
 }
+
 
 function handleCardFormSubmit(evt) {
   evt.preventDefault();
@@ -93,30 +106,32 @@ function handleCardFormSubmit(evt) {
     name: placeInput.value,
     link: imgLinkInput.value
   }
-  createCard(cardData);
-  closeAddCardPopup();
+  renderCard(cardData);
+  closePopup(popupAddCard);
 }
 
-function viewImagePopup(imgLink, caption) {
+function handleViewImageClick(imgLink, caption) {
   const imageElement = cardImageTemplate.querySelector('.popup__container_fullscreen').cloneNode(true);
   imageElement.querySelector('figcaption').textContent = caption.textContent;
   imageElement.querySelector('.figure__image').src = imgLink;
   const buttonCloseElement = imageElement.querySelector('.popup__button-close');
   buttonCloseElement.addEventListener('click', function(evt) {
     buttonCloseElement.parentElement.remove();
-    popupViewImage.classList.remove('popup_opened');
+    closePopup(popupViewImage);
   })
   popupViewImage.appendChild(imageElement);
-  popupViewImage.classList.add('popup_opened');
+  openPopup(popupViewImage);
 }
 
-// Buttons and forms listeners
-editProfileButton.addEventListener('click', editProfilePopup);
-closeProfileButton.addEventListener('click', closeEditProfilePopup);
-editProfileForm.addEventListener('submit', handleFormSubmit);
+// Edit Profile Form: opening, closing, submitting
+editProfileButton.addEventListener('click', handleEditProfileClick);
+closeProfileButton.addEventListener('click', handleCloseEditProfileClick);
+editProfileForm.addEventListener('submit', handleEditProfileFormSubmit);
 
-addCardButton.addEventListener('click', addCardPopup);
-closeAddCardButton.addEventListener('click', closeAddCardPopup);
+// Adding Card Form: opening, closing, submitting
+addCardButton.addEventListener('click', handleAddCardClick);
+closeAddCardButton.addEventListener('click', handleCloseAddCardClick);
 addCardForm.addEventListener('submit', handleCardFormSubmit);
 
+// Filling the page with existing data
 addExistingCards(initialCards);
