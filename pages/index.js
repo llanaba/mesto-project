@@ -1,3 +1,5 @@
+// * * * VARIABLES * * *
+
 // Popup windows
 const popupProfileEdit = document.querySelector('.popup_edit-profile');
 const popupAddCard = document.querySelector('.popup_add-card');
@@ -24,6 +26,39 @@ const placeInput = popupAddCard.querySelector('input[name="place-name"]');
 const imgLinkInput = popupAddCard.querySelector('input[name="place-link"]');
 
 const existingCards = document.querySelector('.cards__list');
+
+// * * * FUNCTIONS * * *
+
+// General functions for popups
+
+function closePopup(popup) {
+  popup.classList.remove('popup_opened');
+}
+
+function openPopup(popup) {
+  popup.classList.add('popup_opened');
+}
+
+// Functions responsible for Profile Editing
+
+function handleEditProfileClick() {
+  nameInput.value = userName.textContent;
+  descriptionInput.value = userDescription.textContent;
+  openPopup(popupProfileEdit);
+}
+
+function handleCloseEditProfileClick() {
+  closePopup(popupProfileEdit);
+}
+
+function handleEditProfileFormSubmit(evt) {
+  evt.preventDefault();
+  userName.textContent = nameInput.value;
+  userDescription.textContent = descriptionInput.value;
+  closePopup(popupProfileEdit);
+}
+
+// Functions responsible for Card Editing (add, like, delete)
 
 function addExistingCards(cardList) {
   for (let i = 0; i < cardList.length; i++) {
@@ -65,40 +100,13 @@ function handleLikeClick(evt) {
   evt.target.classList.toggle('card__button-like_active');
 }
 
-function closePopup(popup) {
-  popup.classList.remove('popup_opened');
-}
-
-function openPopup(popup) {
-  popup.classList.add('popup_opened');
-}
-
-function handleEditProfileClick() {
-  nameInput.value = userName.textContent;
-  descriptionInput.value = userDescription.textContent;
-  openPopup(popupProfileEdit);
-}
-
-function handleCloseEditProfileClick() {
-  closePopup(popupProfileEdit);
-}
-
-function handleEditProfileFormSubmit(evt) {
-  evt.preventDefault();
-  userName.textContent = nameInput.value;
-  userDescription.textContent = descriptionInput.value;
-  closePopup(popupProfileEdit);
-}
-
 function handleCloseAddCardClick() {
   closePopup(popupAddCard);
 }
 
-
 function handleAddCardClick() {
   openPopup(popupAddCard);
 }
-
 
 function handleCardFormSubmit(evt) {
   evt.preventDefault();
@@ -109,6 +117,8 @@ function handleCardFormSubmit(evt) {
   renderCard(cardData);
   closePopup(popupAddCard);
 }
+
+// Functions responsible for Viewing Images
 
 function handleViewImageClick(imgLink, caption) {
   const imageElement = cardImageTemplate.querySelector('.popup__container_fullscreen').cloneNode(true);
@@ -122,6 +132,8 @@ function handleViewImageClick(imgLink, caption) {
   popupViewImage.appendChild(imageElement);
   openPopup(popupViewImage);
 }
+
+// * * * BUTTON AND FORM LISTENERS * * *
 
 // Edit Profile Form: opening, closing, submitting
 editProfileButton.addEventListener('click', handleEditProfileClick);
