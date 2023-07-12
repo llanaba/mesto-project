@@ -16,13 +16,14 @@ const descriptionInput = popupProfileEdit.querySelector('input[name="user-descri
 const userName = document.querySelector('h1.profile__name');
 const userDescription = document.querySelector('p.profile__description');
 
-// Adding card buttons and template
+// Card-related buttons and template
 const addCardForm = document.querySelector('form[name="new-card-form"]');
 const cardTemplate = document.querySelector('#card').content;
 const addCardButton = document.querySelector('.profile__button-add');
 const closeAddCardButton = popupAddCard.querySelector('.popup__button-close');
 const placeInput = popupAddCard.querySelector('input[name="place-name"]');
 const imgLinkInput = popupAddCard.querySelector('input[name="place-link"]');
+const closeImageButton = popupViewImage.querySelector('.popup__button-close');
 
 const existingCards = document.querySelector('.cards__list');
 
@@ -35,10 +36,6 @@ function closePopup(popup) {
 }
 
 function openPopup(popup) {
-  const closeButton = popup.querySelector('.popup__button-close');
-  closeButton.addEventListener('click', function() {
-    closePopup(popup);
-  });
   popup.classList.add('popup_opened');
 }
 
@@ -110,8 +107,7 @@ function handleCardFormSubmit(evt) {
     link: imgLinkInput.value
   }
   renderCard(cardData);
-  placeInput.value = "";
-  imgLinkInput.value = "";
+  evt.target.reset()
   closePopup(popupAddCard);
 }
 
@@ -129,10 +125,21 @@ function handleViewImageClick(imgLink, caption) {
 // Edit Profile Form: opening, closing, submitting
 editProfileButton.addEventListener('click', handleEditProfileClick);
 editProfileForm.addEventListener('submit', handleEditProfileFormSubmit);
+closeProfileButton.addEventListener('click', function() {
+  closePopup(popupProfileEdit);
+});
 
 // Adding Card Form: opening, closing, submitting
 addCardButton.addEventListener('click', handleAddCardClick);
 addCardForm.addEventListener('submit', handleCardFormSubmit);
+closeAddCardButton.addEventListener('click', function() {
+  closePopup(popupAddCard);
+});
+
+// View Image: closing
+closeImageButton.addEventListener('click', function() {
+  closePopup(popupViewImage);
+});
 
 // Filling the page with existing data
 addExistingCards(initialCards);
