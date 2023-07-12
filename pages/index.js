@@ -31,32 +31,31 @@ function addExistingCards(cardList) {
       name: cardList[i]['name'],
       link: cardList[i]['link']
     }
-    // createCard(cardList[i]['name'], cardList[i]['link']);
     createCard(cardData)
   }
 }
 
 function createCard(cardData) {
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
-  // cardElement.querySelector('h2').textContent = name;
   cardElement.querySelector('h2').textContent = cardData.name;
-  // cardElement.querySelector('.card__image').src = link;
   cardElement.querySelector('.card__image').src = cardData.link;
   const cardImageElement = cardElement.querySelector('.card__image');
   const buttonLikeElement = cardElement.querySelector('.card__button-like');
   const buttonBinElement = cardElement.querySelector('.card__button-bin');
-  buttonLikeElement.addEventListener('click', function(evt) {
-    evt.target.classList.toggle('card__button-like_active');
-  })
-  buttonBinElement.addEventListener('click', function(evt) {
-    const binButton = evt.target
-    const binCard = binButton.parentElement;
-    binCard.remove();
-  })
+  buttonLikeElement.addEventListener('click', handleLikeClick);
+  buttonBinElement.addEventListener('click', handleRemoveCardClick);
   cardImageElement.addEventListener('click', function() {
     viewImagePopup(cardImageElement.src, cardElement.querySelector('h2'));
   });
   existingCards.prepend(cardElement);
+}
+
+function handleRemoveCardClick(evt) {
+  evt.target.closest('.card').remove();
+}
+
+function handleLikeClick(evt) {
+  evt.target.classList.toggle('card__button-like_active');
 }
 
 function closeEditProfilePopup() {
@@ -90,10 +89,11 @@ function handleCardFormSubmit(evt) {
     name: placeInput.value,
     link: imgLinkInput.value
   }
-  // createCard(placeInput.value, imgLinkInput.value);
   createCard(cardData);
   closeAddCardPopup();
 }
+
+
 
 function viewImagePopup(imgLink, caption) {
   console.log(imgLink);
