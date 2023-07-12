@@ -19,7 +19,6 @@ const userDescription = document.querySelector('p.profile__description');
 // Adding card buttons and template
 const addCardForm = document.querySelector('form[name="new-card-form"]');
 const cardTemplate = document.querySelector('#card').content;
-const cardImageTemplate = document.querySelector('#image').content;
 const addCardButton = document.querySelector('.profile__button-add');
 const closeAddCardButton = popupAddCard.querySelector('.popup__button-close');
 const placeInput = popupAddCard.querySelector('input[name="place-name"]');
@@ -36,6 +35,10 @@ function closePopup(popup) {
 }
 
 function openPopup(popup) {
+  const closeButton = popup.querySelector('.popup__button-close');
+  closeButton.addEventListener('click', function() {
+    closePopup(popup);
+  });
   popup.classList.add('popup_opened');
 }
 
@@ -45,10 +48,6 @@ function handleEditProfileClick() {
   nameInput.value = userName.textContent;
   descriptionInput.value = userDescription.textContent;
   openPopup(popupProfileEdit);
-}
-
-function handleCloseEditProfileClick() {
-  closePopup(popupProfileEdit);
 }
 
 function handleEditProfileFormSubmit(evt) {
@@ -100,10 +99,6 @@ function handleLikeClick(evt) {
   evt.target.classList.toggle('card__button-like_active');
 }
 
-function handleCloseAddCardClick() {
-  closePopup(popupAddCard);
-}
-
 function handleAddCardClick() {
   openPopup(popupAddCard);
 }
@@ -115,21 +110,17 @@ function handleCardFormSubmit(evt) {
     link: imgLinkInput.value
   }
   renderCard(cardData);
+  placeInput.value = "";
+  imgLinkInput.value = "";
   closePopup(popupAddCard);
 }
 
 // Functions responsible for Viewing Images
 
 function handleViewImageClick(imgLink, caption) {
-  const imageElement = cardImageTemplate.querySelector('.popup__container_fullscreen').cloneNode(true);
-  imageElement.querySelector('figcaption').textContent = caption.textContent;
+  const imageElement = document.querySelector('.popup__container_fullscreen')
   imageElement.querySelector('.figure__image').src = imgLink;
-  const buttonCloseElement = imageElement.querySelector('.popup__button-close');
-  buttonCloseElement.addEventListener('click', function(evt) {
-    buttonCloseElement.parentElement.remove();
-    closePopup(popupViewImage);
-  })
-  popupViewImage.appendChild(imageElement);
+  imageElement.querySelector('figcaption').textContent = caption.textContent;
   openPopup(popupViewImage);
 }
 
@@ -137,12 +128,10 @@ function handleViewImageClick(imgLink, caption) {
 
 // Edit Profile Form: opening, closing, submitting
 editProfileButton.addEventListener('click', handleEditProfileClick);
-closeProfileButton.addEventListener('click', handleCloseEditProfileClick);
 editProfileForm.addEventListener('submit', handleEditProfileFormSubmit);
 
 // Adding Card Form: opening, closing, submitting
 addCardButton.addEventListener('click', handleAddCardClick);
-closeAddCardButton.addEventListener('click', handleCloseAddCardClick);
 addCardForm.addEventListener('submit', handleCardFormSubmit);
 
 // Filling the page with existing data
