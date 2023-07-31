@@ -27,6 +27,36 @@ const closeImageButton = popupViewImage.querySelector('.popup__button-close');
 
 const existingCards = document.querySelector('.cards__list');
 
+
+// * * * VALIDATION * * *
+// addCardForm
+// placeInput
+console.log(placeInput.id)
+const formError = addCardForm.querySelector(`.${placeInput.id}-error`);
+console.log(formError.textContent)
+
+const showInputError = (element, errorMessage) => {
+  element.classList.add('form__input-text_error');
+  formError.textContent = errorMessage;
+  formError.classList.add('form__input-error_active');
+};
+
+const hideInputError = (element) => {
+  element.classList.remove('form__input-text_error');
+  formError.classList.remove('form__input-error_active');
+  formError.textContent = '';
+};
+
+const isValid = () => {
+  if (!placeInput.validity.valid) {
+    showInputError(placeInput, placeInput.validationMessage);
+  } else {
+    hideInputError(placeInput);
+  }
+}
+
+placeInput.addEventListener('input', isValid);
+
 // * * * FUNCTIONS * * *
 
 // General functions for popups
@@ -120,6 +150,7 @@ function handleViewImageClick(imgLink, caption) {
   openPopup(popupViewImage);
 }
 
+
 // * * * BUTTON AND FORM LISTENERS * * *
 
 // Edit Profile Form: opening, closing, submitting
@@ -143,3 +174,4 @@ closeImageButton.addEventListener('click', function() {
 
 // Filling the page with existing data
 addExistingCards(initialCards);
+
