@@ -31,31 +31,76 @@ const existingCards = document.querySelector('.cards__list');
 // * * * VALIDATION * * *
 // addCardForm
 // placeInput
+const formElement = addCardForm
 console.log(placeInput.id)
 const formError = addCardForm.querySelector(`.${placeInput.id}-error`);
 console.log(formError.textContent)
 
-const showInputError = (element, errorMessage) => {
-  element.classList.add('form__input-text_error');
-  formError.textContent = errorMessage;
-  formError.classList.add('form__input-error_active');
+const showInputError = (formElement, inputElement, errorMessage) => {
+  const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
+  inputElement.classList.add('form__input-text_error');
+  errorElement.textContent = errorMessage;
+  errorElement.classList.add('form__input-error_active');
 };
 
-const hideInputError = (element) => {
-  element.classList.remove('form__input-text_error');
-  formError.classList.remove('form__input-error_active');
-  formError.textContent = '';
+const hideInputError = (formElement, inputElement) => {
+  const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
+  inputElement.classList.remove('form__input-text_error');
+  errorElement.classList.remove('form__input-error_active');
+  errorElement.textContent = '';
 };
 
-const isValid = () => {
-  if (!placeInput.validity.valid) {
-    showInputError(placeInput, placeInput.validationMessage);
+const isValid = (formElement, inputElement) => {
+  if (inputElement.validity.patternMismatch) {
+    inputElement.setCustomValidity(inputElement.dataset.errorMessage);
   } else {
-    hideInputError(placeInput);
+    inputElement.setCustomValidity("");
+  }
+  if (!inputElement.validity.valid) {
+    showInputError(formElement, inputElement, inputElement.validationMessage);
+  } else {
+    hideInputError(formElement, inputElement);
   }
 }
 
-placeInput.addEventListener('input', isValid);
+const setEventListeners = (formElement) => {
+  const inputList = Array.from(formElement.querySelectorAll('.form__input-text'));
+  const buttonElement = formElement.querySelector('.popup__button-save');
+
+  toggleButtonState(inputList, buttonElement);
+  inputList.forEach((inputElement) => {
+    inputElement.addEventListener('input', () => {
+      isValid(formElement, inputElement);
+      toggleButtonState(inputList, buttonElement);
+    });
+  });
+};
+
+const enableValidation = () => {
+  const formList = Array.from(document.querySelectorAll('.form'));
+  formList.forEach((formElement) => {
+    setEventListeners(formElement);
+  })
+}
+
+const hasInvalidInput = (inputList) => {
+  return inputList.some((inputElement) => {
+    return !inputElement.validity.valid;
+  })
+}
+
+const toggleButtonState = (inputList, buttonElement) => {
+  if (hasInvalidInput(inputList)) {
+    buttonElement.disabled = true;
+    buttonElement.classList.add('popup__button-save_disabled');
+  } else {
+    buttonElement.disabled = false;
+    buttonElement.classList.remove('popup__button-save_disabled');
+  }
+}
+
+enableValidation();
+
 
 // * * * FUNCTIONS * * *
 
@@ -147,6 +192,9 @@ function handleViewImageClick(imgLink, caption) {
   const imageElement = document.querySelector('.popup__container_fullscreen')
   imageElement.querySelector('.figure__image').src = imgLink;
   imageElement.querySelector('figcaption').textContent = caption.textContent;
+  // imageElement.closest('.popup_view-image').addEventListener('click', function () {
+  //   closePopup(imageElement.closest('.popup_view-image'));
+  // })
   openPopup(popupViewImage);
 }
 
@@ -171,6 +219,14 @@ closeAddCardButton.addEventListener('click', function() {
 closeImageButton.addEventListener('click', function() {
   closePopup(popupViewImage);
 });
+popupViewImage.addEventListener('click', function () {
+  closePopup(popupViewImage);
+})
+document.addEventListener('keydown', function (evt) {
+  if (evt.key === 'Escape') {
+    closePopup(popupViewImage);
+  }
+})
 
 // Filling the page with existing data
 addExistingCards(initialCards);
