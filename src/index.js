@@ -1,5 +1,5 @@
 import './pages/index.css'
-import { initialCards } from './cards.js';
+import { initialCards } from './components/cards.js';
 // * * * VARIABLES * * *
 
 // Popup windows
