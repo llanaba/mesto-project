@@ -4,15 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mesto</title>
-  <link rel="stylesheet" href="pages/index.css">
+  <!-- <link rel="stylesheet" href="pages/index.css"> -->
 </head>
 <body class="page">
   <header class="page__section header">
-    <img src="images/logo.svg" class="header__logo" alt="Логотип сайта Mesto">
+    <img src="<%=require('./images/logo.svg')%>" class="header__logo" alt="Логотип сайта Mesto">
   </header>
   <main class="page__section content">
     <section class="profile">
-      <img src="images/avatar.jpeg" class="profile__avatar" alt="Аватар пользователя">
+      <img src="<%=require('./images/avatar.jpeg')%>" class="profile__avatar" alt="Аватар пользователя">
       <div class="profile__info">
         <div class="profile__info-main">
           <h1 class="profile__name">Жак-Ив Кусто</h1>
@@ -46,11 +46,35 @@
   <div class="popup page__section popup_edit-profile">
     <div class="popup__container">
       <button type="button" class="button popup__button-close" aria-label="Закрыть"></button>
-      <form name="edit-profile-form" class="form">
+      <form name="edit-profile-form" class="form" novalidate>
         <h2 class="form__title">Редактировать профиль</h2>
         <fieldset class="form__input-container">
-            <input type="text" class="form__input-text" name="user-name" placeholder="Ваше имя">
-            <input type="text" class="form__input-text" name="user-description" placeholder="Ваше описание">
+          <label class="form__field">
+            <input
+              id="user-name-input"
+              type="text"
+              pattern="^[a-zA-Zа-яА-Яё\-\s]+$"
+              data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+              minlength="2" maxlength="40"
+              class="form__input-text"
+              name="user-name"
+              placeholder="Ваше имя"
+              required>
+            <span class="user-name-input-error form__input-error"></span>
+          </label>
+          <label class="form__field">
+            <input
+              id="user-description-input"
+              type="text"
+              pattern="^[a-zA-Zа-яА-Яё\-\s]+$"
+              data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+              minlength="2" maxlength="200"
+              class="form__input-text"
+              name="user-description"
+              placeholder="Ваше описание"
+              required>
+            <span class="user-description-input-error form__input-error"></span>
+          </label>
         </fieldset>
         <button type="submit" class="button popup__button-save">Сохранить</button>
       </form>
@@ -60,11 +84,32 @@
   <div class="popup page__section popup_add-card">
       <div class="popup__container">
         <button type="button" class="button popup__button-close" aria-label="Закрыть"></button>
-        <form name="new-card-form" class="form">
+        <form name="new-card-form" class="form" novalidate>
           <h2 class="form__title">Новое место</h2>
           <fieldset class="form__input-container">
-              <input type="text" class="form__input-text" name="place-name" placeholder="Название" required>
-              <input type="url" class="form__input-text" name="place-link" placeholder="Ссылка на картинку" required>
+              <label class="form__field">
+                <input
+                  id="place-name-input"
+                  type="text"
+                  minlength="2" maxlength="30"
+                  pattern="^[a-zA-Zа-яА-Яё\-\s]+$"
+                  data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+                  class="form__input-text"
+                  name="place-name"
+                  placeholder="Название"
+                  required>
+                <span class="place-name-input-error form__input-error"></span>
+              </label>
+              <label class="form__field">
+                <input
+                  id="place-link-input"
+                  type="url"
+                  class="form__input-text"
+                  name="place-link"
+                  placeholder="Ссылка на картинку"
+                  required>
+                <span class="place-link-input-error form__input-error"></span>
+              </label>
           </fieldset>
           <button type="submit" class="button popup__button-save">Создать</button>
         </form>
@@ -80,8 +125,5 @@
           </figure>
         </div>
     </div>
-
-  <script src="scripts/cards.js"></script>
-  <script src="scripts/index.js"></script>
 </body>
 </html>

@@ -146,3 +146,5 @@ dmypy.json
 .mypy_cache
 
 notes.txt
+node_modules/
+dist/
