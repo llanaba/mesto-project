@@ -6,7 +6,7 @@ import {
   addExistingCards,
   handleAddCardClick,
   handleCardFormSubmit
-  } from './components/card.js';
+  } from './components/cards.js';
 
 const validationSelectors = {
   formSelector: '.form',
@@ -16,14 +16,6 @@ const validationSelectors = {
   inputErrorClass: 'form__input-text_error',
   errorClass: 'form__input-error_active'
 }
-
-// const cardSelectors = {
-//   popupAddCardSelector: '.popup_add-card',
-//   cardTemplateId: '#card',
-//   cardsListSelector: '.cards__list',
-//   placeInputSelector: 'input[name="place-name"]',
-//   imgLinkInputSelector: 'input[name="place-link"]',
-// }
 
 // * * * VARIABLES * * *
 
@@ -45,7 +37,7 @@ const userDescription = document.querySelector('p.profile__description');
 
 // Card-related buttons and template
 const addCardForm = document.querySelector('form[name="new-card-form"]');
-// const cardTemplate = document.querySelector('#card').content;
+const cardTemplate = document.querySelector('#card').content;
 const addCardButton = document.querySelector('.profile__button-add');
 const closeAddCardButton = popupAddCard.querySelector('.popup__button-close');
 // const placeInput = popupAddCard.querySelector('input[name="place-name"]');
@@ -153,8 +145,15 @@ closeProfileButton.addEventListener('click', function() {
 });
 
 // Adding Card Form: opening, closing, submitting
-addCardButton.addEventListener('click', handleAddCardClick);
-addCardForm.addEventListener('submit', handleCardFormSubmit);
+// addCardButton.addEventListener('click', handleAddCardClick);
+addCardButton.addEventListener('click', function() {
+  handleAddCardClick(popupAddCard);
+});
+// addCardForm.addEventListener('submit', handleCardFormSubmit);
+addCardForm.addEventListener('submit', function(evt) {
+  evt.preventDefault();
+  handleCardFormSubmit(evt, popupAddCard, cardTemplate);
+});
 closeAddCardButton.addEventListener('click', function() {
   closePopup(popupAddCard);
 });
@@ -173,5 +172,5 @@ document.addEventListener('keydown', function (evt) {
 })
 
 // Filling the page with existing data
-addExistingCards(initialCards);
+addExistingCards(initialCards, cardTemplate);
 

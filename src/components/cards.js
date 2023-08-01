@@ -1,35 +1,23 @@
 import { openPopup, closePopup } from './modal.js';
 
 const existingCards = document.querySelector('.cards__list');
-const cardTemplate = document.querySelector('#card').content;
-const popupAddCard = document.querySelector('.popup_add-card');
 const popupViewImage = document.querySelector('.popup_view-image');
-const placeInput = popupAddCard.querySelector('input[name="place-name"]');
-const imgLinkInput = popupAddCard.querySelector('input[name="place-link"]');
-// const closeAddCardButton = popupAddCard.querySelector('.popup__button-close');
 
-// const addCardForm = document.querySelector('form[name="new-card-form"]');
-// const addCardButton = document.querySelector('.profile__button-add');
-// const closeAddCardButton = popupAddCard.querySelector('.popup__button-close');
-// const placeInput = popupAddCard.querySelector('input[name="place-name"]');
-// const imgLinkInput = popupAddCard.querySelector('input[name="place-link"]');
-// const closeImageButton = popupViewImage.querySelector('.popup__button-close');
-
-export function addExistingCards(cardList) {
+export function addExistingCards(cardList, cardTemplate) {
   for (let i = 0; i < cardList.length; i++) {
     const cardData = {
       name: cardList[i]['name'],
       link: cardList[i]['link']
     }
-    renderCard(cardData);
+    renderCard(cardData, cardTemplate);
   }
 }
 
-function renderCard(cardData) {
-  existingCards.prepend(createCard(cardData))
+function renderCard(cardData, cardTemplate) {
+  existingCards.prepend(createCard(cardData, cardTemplate))
 }
 
-function createCard(cardData) {
+function createCard(cardData, cardTemplate) {
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
   const cardTitleElement = cardElement.querySelector('h2');
   const cardImageElement = cardElement.querySelector('.card__image');
@@ -65,17 +53,18 @@ function handleViewImageClick(imgLink, caption) {
   openPopup(popupViewImage);
 }
 
-export function handleAddCardClick() {
+export function handleAddCardClick(popupAddCard) {
   openPopup(popupAddCard);
 }
 
-export function handleCardFormSubmit(evt) {
-  evt.preventDefault();
+export function handleCardFormSubmit(evt, popupAddCard, cardTemplate) {
+  const placeInput = popupAddCard.querySelector('input[name="place-name"]');
+  const imgLinkInput = popupAddCard.querySelector('input[name="place-link"]');
   const cardData = {
     name: placeInput.value,
     link: imgLinkInput.value
   }
-  renderCard(cardData);
+  renderCard(cardData, cardTemplate);
   evt.target.reset()
   closePopup(popupAddCard);
 }
