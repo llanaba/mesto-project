@@ -1,15 +1,15 @@
-import './pages/index.css'
+import './index.css'
 
-import { initialCards } from './components/cards_data.js';
-import { enableValidation } from './components/validate.js';
-import { openPopup, closePopup } from './components/modal.js';
+import { initialCards } from '../components/cards_data.js';
+import { enableValidation } from '../components/validate.js';
+import { openPopup, closePopup } from '../components/modal.js';
 import {
   addExistingCards,
   handleAddCardClick,
   handleCardFormSubmit
-  } from './components/cards.js';
+  } from '../components/cards.js';
 
-import { setClosePopupEventListeners } from './components/modal.js';
+import { setClosePopupEventListeners } from '../components/modal.js';
 
 const validationSelectors = {
   formSelector: '.form',
@@ -29,13 +29,10 @@ const popupAddCard = document.querySelector('.popup_add-card');
 
 // Card-related buttons and template
 const addCardForm = document.querySelector('form[name="new-card-form"]');
-const cardTemplate = document.querySelector('#card').content;
 const addCardButton = document.querySelector('.profile__button-add');
-// const closeAddCardButton = popupAddCard.querySelector('.popup__button-close');
 
 // Profile-related buttons, form, fields and values
 const editProfileButton = document.querySelector('.profile__button-edit');
-// const closeProfileButton = popupProfileEdit.querySelector('.popup__button-close');
 const editProfileForm = document.querySelector('form[name="edit-profile-form"]');
 const nameInput = popupProfileEdit.querySelector('input[name="user-name"]');
 const descriptionInput = popupProfileEdit.querySelector('input[name="user-description"]');
@@ -63,7 +60,7 @@ function handleEditProfileFormSubmit(evt) {
 enableValidation(validationSelectors);
 
 // Filling the page with existing data
-addExistingCards(initialCards, cardTemplate);
+addExistingCards(initialCards);
 
 
 // * * * BUTTON AND FORM LISTENERS * * *
@@ -78,7 +75,7 @@ addCardButton.addEventListener('click', function() {
 });
 addCardForm.addEventListener('submit', function(evt) {
   evt.preventDefault();
-  handleCardFormSubmit(evt, popupAddCard, cardTemplate);
+  handleCardFormSubmit(evt, popupAddCard);
 });
 
 // Setting closing listeners for all popups
