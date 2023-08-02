@@ -1,9 +1,20 @@
+export function setClosePopupEventListeners(popup) {
+  const closeButton = popup.querySelector('.popup__button-close');
+  closeButton.addEventListener('click', function() {
+    closePopup(popup);
+  });
+}
+
 export function closePopup(popup) {
   popup.classList.remove('popup_opened');
+  document.removeEventListener('keydown', closeEscPopup);
+  document.removeEventListener('click', closeOverlayPopup);
 }
 
 export function openPopup(popup) {
   popup.classList.add('popup_opened');
+  document.addEventListener('keydown', closeEscPopup);
+  document.addEventListener('click', closeOverlayPopup);
 }
 
 export function handleViewImageClick(imgLink, caption) {
@@ -11,21 +22,19 @@ export function handleViewImageClick(imgLink, caption) {
   const imageElement = document.querySelector('.popup__container_fullscreen')
   imageElement.querySelector('.figure__image').src = imgLink;
   imageElement.querySelector('figcaption').textContent = caption.textContent;
-  handleCloseImage(popupViewImage);
   openPopup(popupViewImage);
 }
 
-function handleCloseImage(popupViewImage) {
-  const closeImageButton = popupViewImage.querySelector('.popup__button-close');
-  closeImageButton.addEventListener('click', function() {
-    closePopup(popupViewImage);
-  });
-  popupViewImage.addEventListener('click', function () {
-    closePopup(popupViewImage);
-  })
-  document.addEventListener('keydown', function (evt) {
-    if (evt.key === 'Escape') {
-      closePopup(popupViewImage);
-    }
-  })
+function closeEscPopup(evt) {
+  if (evt.key === 'Escape') {
+    const popup = document.querySelector('.popup_opened');
+    closePopup(popup)
+  }
+}
+
+function closeOverlayPopup(evt) {
+  if (evt.target.classList.contains('popup_opened')) {
+    const popup = document.querySelector('.popup_opened');
+    closePopup(popup)
+  }
 }
