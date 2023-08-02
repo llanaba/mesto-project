@@ -1,4 +1,5 @@
 import { openPopup, closePopup, handleViewImageClick } from './modal.js';
+import { toggleButtonState } from './validate.js';
 
 const existingCards = document.querySelector('.cards__list');
 
@@ -49,11 +50,13 @@ export function handleAddCardClick(popupAddCard) {
 export function handleCardFormSubmit(evt, popupAddCard, cardTemplate) {
   const placeInput = popupAddCard.querySelector('input[name="place-name"]');
   const imgLinkInput = popupAddCard.querySelector('input[name="place-link"]');
+  const saveCardButton = popupAddCard.querySelector('.popup__button-save');
   const cardData = {
     name: placeInput.value,
     link: imgLinkInput.value
   }
   renderCard(cardData, cardTemplate);
   evt.target.reset()
+  toggleButtonState([placeInput, imgLinkInput], saveCardButton, 'popup__button-save_disabled')
   closePopup(popupAddCard);
 }

@@ -9,6 +9,8 @@ import {
   handleCardFormSubmit
   } from './components/cards.js';
 
+import { setClosePopupEventListeners } from './components/modal.js';
+
 const validationSelectors = {
   formSelector: '.form',
   inputSelector: '.form__input-text',
@@ -21,6 +23,7 @@ const validationSelectors = {
 // * * * VARIABLES AND FUNCTIONS * * *
 
 // Popup windows
+const popups = Array.from(document.querySelectorAll('.popup'))
 const popupProfileEdit = document.querySelector('.popup_edit-profile');
 const popupAddCard = document.querySelector('.popup_add-card');
 
@@ -28,11 +31,11 @@ const popupAddCard = document.querySelector('.popup_add-card');
 const addCardForm = document.querySelector('form[name="new-card-form"]');
 const cardTemplate = document.querySelector('#card').content;
 const addCardButton = document.querySelector('.profile__button-add');
-const closeAddCardButton = popupAddCard.querySelector('.popup__button-close');
+// const closeAddCardButton = popupAddCard.querySelector('.popup__button-close');
 
 // Profile-related buttons, form, fields and values
 const editProfileButton = document.querySelector('.profile__button-edit');
-const closeProfileButton = popupProfileEdit.querySelector('.popup__button-close');
+// const closeProfileButton = popupProfileEdit.querySelector('.popup__button-close');
 const editProfileForm = document.querySelector('form[name="edit-profile-form"]');
 const nameInput = popupProfileEdit.querySelector('input[name="user-name"]');
 const descriptionInput = popupProfileEdit.querySelector('input[name="user-description"]');
@@ -62,14 +65,12 @@ enableValidation(validationSelectors);
 // Filling the page with existing data
 addExistingCards(initialCards, cardTemplate);
 
+
 // * * * BUTTON AND FORM LISTENERS * * *
 
 // Edit Profile Form: opening, closing, submitting
 editProfileButton.addEventListener('click', handleEditProfileClick);
 editProfileForm.addEventListener('submit', handleEditProfileFormSubmit);
-closeProfileButton.addEventListener('click', function() {
-  closePopup(popupProfileEdit);
-});
 
 // Adding Card Form: opening, closing, submitting
 addCardButton.addEventListener('click', function() {
@@ -79,6 +80,8 @@ addCardForm.addEventListener('submit', function(evt) {
   evt.preventDefault();
   handleCardFormSubmit(evt, popupAddCard, cardTemplate);
 });
-closeAddCardButton.addEventListener('click', function() {
-  closePopup(popupAddCard);
-});
+
+// Setting closing listeners for all popups
+popups.forEach((popup) => {
+  setClosePopupEventListeners(popup);
+})
