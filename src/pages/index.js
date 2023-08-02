@@ -11,6 +11,12 @@ import {
 
 import { setClosePopupEventListeners } from '../components/modal.js';
 
+import {
+  getUser,
+  getInitialCards,
+  updateProfileInfo
+  } from '../components/api.js';
+
 const validationSelectors = {
   formSelector: '.form',
   inputSelector: '.form__input-text',
@@ -38,6 +44,7 @@ const nameInput = popupProfileEdit.querySelector('input[name="user-name"]');
 const descriptionInput = popupProfileEdit.querySelector('input[name="user-description"]');
 const userName = document.querySelector('h1.profile__name');
 const userDescription = document.querySelector('p.profile__description');
+const userAvatar = document.querySelector('.profile__avatar');
 
 // Functions responsible for Profile Editing
 
@@ -49,18 +56,37 @@ function handleEditProfileClick() {
 
 function handleEditProfileFormSubmit(evt) {
   evt.preventDefault();
-  userName.textContent = nameInput.value;
-  userDescription.textContent = descriptionInput.value;
+  updateProfileInfo(nameInput.value, descriptionInput.value)
   closePopup(popupProfileEdit);
+  renderUserInfo('me');
+}
+
+function renderUserInfo(userId) {
+  getUser(userId)
+  .then((userData) => {
+    userName.textContent = userData.name
+    userDescription.textContent = userData.about
+    userAvatar.src = userData.avatar
+  })
 }
 
 // * * * MAIN CODE * * *
 
 // Enabling validation for all forms on the site
 enableValidation(validationSelectors);
+renderUserInfo('me');
+
 
 // Filling the page with existing data
-addExistingCards(initialCards);
+getInitialCards()
+  .then((cardsData) => {
+    console.log(cardsData)
+    addExistingCards(cardsData)
+  })
+
+
+// Filling the page with existing data
+// addExistingCards(initialCards);
 
 
 // * * * BUTTON AND FORM LISTENERS * * *
@@ -82,3 +108,5 @@ addCardForm.addEventListener('submit', function(evt) {
 popups.forEach((popup) => {
   setClosePopupEventListeners(popup);
 })
+
+
