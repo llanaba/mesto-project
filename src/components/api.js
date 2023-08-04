@@ -79,6 +79,21 @@ export const likeCard = (cardId, method) => {
   })
 }
 
+export const updateAvatar = (avatarUrl) => {
+  console.log("I'm about to update avatar")
+  const url = `${config.baseUrl}/users/me/avatar`
+  return fetch(url, {
+    method: 'PATCH',
+    headers: config.headers,
+    body: JSON.stringify({
+      avatar: avatarUrl
+    })
+  })
+  .then((res) => {
+    return res.json();
+  })
+}
+
 // fetch('https://nomoreparties.co/v1/cohortId/users/me', {
 //   method: 'PATCH',
 //   headers: {

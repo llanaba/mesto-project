@@ -15,6 +15,7 @@ import { setClosePopupEventListeners } from '../components/modal.js';
 import {
   getUser,
   updateProfileInfo,
+  updateAvatar,
   } from '../components/api.js';
 
 const validationSelectors = {
@@ -33,7 +34,6 @@ const popups = Array.from(document.querySelectorAll('.popup'))
 const popupProfileEdit = document.querySelector('.popup_edit-profile');
 const popupAddCard = document.querySelector('.popup_add-card');
 const popupAvatarEdit = document.querySelector('.popup_edit-avatar');
-console.log(popupAvatarEdit)
 
 // Card-related buttons and template
 const addCardForm = document.querySelector('form[name="new-card-form"]');
@@ -43,7 +43,8 @@ const addCardButton = document.querySelector('.profile__button-add');
 const editProfileButton = document.querySelector('.profile__button-edit');
 const editProfileForm = document.querySelector('form[name="edit-profile-form"]');
 const editAvatarButton = document.querySelector('.profile__avatar-overlay');
-console.log(editAvatarButton)
+const editAvatarForm = document.querySelector('.form[name="edit-avatar-form"]');
+const avatarInput = popupAvatarEdit.querySelector('input[name="avatar-link"]');
 const nameInput = popupProfileEdit.querySelector('input[name="user-name"]');
 const descriptionInput = popupProfileEdit.querySelector('input[name="user-description"]');
 const userName = document.querySelector('h1.profile__name');
@@ -69,6 +70,13 @@ function handleEditAvatarClick() {
   openPopup(popupAvatarEdit);
 }
 
+function handleEditAvatarFormSubmit(evt) {
+  evt.preventDefault();
+  updateAvatar(avatarInput.value)
+    .then(() => {renderUserInfo('me')});
+  closePopup(popupAvatarEdit);
+}
+
 function renderUserInfo(userId) {
   getUser(userId)
   .then((userData) => {
@@ -81,14 +89,11 @@ function renderUserInfo(userId) {
 // * * * MAIN CODE * * *
 
 // Enabling validation for all forms on the site
-console.log("I'm about to start enabling validation")
 enableValidation(validationSelectors);
 
-console.log("I'm about to render user info")
 renderUserInfo('me');
 
 // Filling the page with existing data
-console.log("I'm about to render initial cards")
 renderInitialCards();
 
 
@@ -98,6 +103,7 @@ renderInitialCards();
 editProfileButton.addEventListener('click', handleEditProfileClick);
 editProfileForm.addEventListener('submit', handleEditProfileFormSubmit);
 editAvatarButton.addEventListener('click', handleEditAvatarClick);
+editAvatarForm.addEventListener('submit', handleEditAvatarFormSubmit);
 
 // Adding Card Form: opening, closing, submitting
 addCardButton.addEventListener('click', function() {
@@ -112,5 +118,3 @@ addCardForm.addEventListener('submit', function(evt) {
 popups.forEach((popup) => {
   setClosePopupEventListeners(popup);
 })
-
-
