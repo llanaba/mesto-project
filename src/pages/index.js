@@ -1,20 +1,20 @@
 import './index.css'
 
-import { initialCards } from '../components/cards_data.js';
+// import { initialCards } from '../components/cards_data.js';
 import { enableValidation } from '../components/validate.js';
 import { openPopup, closePopup } from '../components/modal.js';
 import {
-  addExistingCards,
+  // addExistingCards,
   handleAddCardClick,
-  handleCardFormSubmit
+  handleCardFormSubmit,
+  renderInitialCards
   } from '../components/cards.js';
 
 import { setClosePopupEventListeners } from '../components/modal.js';
 
 import {
   getUser,
-  getInitialCards,
-  updateProfileInfo
+  updateProfileInfo,
   } from '../components/api.js';
 
 const validationSelectors = {
@@ -32,6 +32,8 @@ const validationSelectors = {
 const popups = Array.from(document.querySelectorAll('.popup'))
 const popupProfileEdit = document.querySelector('.popup_edit-profile');
 const popupAddCard = document.querySelector('.popup_add-card');
+const popupAvatarEdit = document.querySelector('.popup_edit-avatar');
+console.log(popupAvatarEdit)
 
 // Card-related buttons and template
 const addCardForm = document.querySelector('form[name="new-card-form"]');
@@ -40,6 +42,8 @@ const addCardButton = document.querySelector('.profile__button-add');
 // Profile-related buttons, form, fields and values
 const editProfileButton = document.querySelector('.profile__button-edit');
 const editProfileForm = document.querySelector('form[name="edit-profile-form"]');
+const editAvatarButton = document.querySelector('.profile__avatar-overlay');
+console.log(editAvatarButton)
 const nameInput = popupProfileEdit.querySelector('input[name="user-name"]');
 const descriptionInput = popupProfileEdit.querySelector('input[name="user-description"]');
 const userName = document.querySelector('h1.profile__name');
@@ -61,6 +65,10 @@ function handleEditProfileFormSubmit(evt) {
   renderUserInfo('me');
 }
 
+function handleEditAvatarClick() {
+  openPopup(popupAvatarEdit);
+}
+
 function renderUserInfo(userId) {
   getUser(userId)
   .then((userData) => {
@@ -73,20 +81,15 @@ function renderUserInfo(userId) {
 // * * * MAIN CODE * * *
 
 // Enabling validation for all forms on the site
+console.log("I'm about to start enabling validation")
 enableValidation(validationSelectors);
+
+console.log("I'm about to render user info")
 renderUserInfo('me');
 
-
 // Filling the page with existing data
-getInitialCards()
-  .then((cardsData) => {
-    console.log(cardsData)
-    addExistingCards(cardsData)
-  })
-
-
-// Filling the page with existing data
-// addExistingCards(initialCards);
+console.log("I'm about to render initial cards")
+renderInitialCards();
 
 
 // * * * BUTTON AND FORM LISTENERS * * *
@@ -94,6 +97,7 @@ getInitialCards()
 // Edit Profile Form: opening, closing, submitting
 editProfileButton.addEventListener('click', handleEditProfileClick);
 editProfileForm.addEventListener('submit', handleEditProfileFormSubmit);
+editAvatarButton.addEventListener('click', handleEditAvatarClick);
 
 // Adding Card Form: opening, closing, submitting
 addCardButton.addEventListener('click', function() {

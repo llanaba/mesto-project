@@ -38,6 +38,47 @@ export const updateProfileInfo = (userName, userDescription) => {
   })
 }
 
+export const postNewCard = (cardName, imageLink) => {
+  console.log("I'm adding a new card")
+  const url = `${config.baseUrl}/cards`;
+  return fetch(url, {
+    method: 'POST',
+    headers: config.headers,
+    body: JSON.stringify({
+      name: cardName,
+      link: imageLink
+    })
+  })
+  .then((res) => {
+    if (res.ok) {
+      console.log(res)
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
+}
+
+export const deleteCard = (cardId) => {
+  console.log("I'm deleting cards")
+  const url = `${config.baseUrl}/cards/${cardId}`
+  return fetch(url, {
+    method: 'DELETE',
+    headers: config.headers,
+  })
+}
+
+export const likeCard = (cardId, method) => {
+  console.log("I'm liking cards")
+  const url = `${config.baseUrl}/cards/likes/${cardId}`
+  return fetch(url, {
+    method: method,
+    headers: config.headers,
+  })
+  .then((res) => {
+      return res.json();
+  })
+}
+
 // fetch('https://nomoreparties.co/v1/cohortId/users/me', {
 //   method: 'PATCH',
 //   headers: {

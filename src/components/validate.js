@@ -26,10 +26,14 @@ const isValid = (formElement, inputElement, selectors) => {
 }
 
 const setEventListeners = (formElement, selectors) => {
+  console.log("I'm inside setEventListeners")
   const inputList = Array.from(formElement.querySelectorAll(selectors.inputSelector));
+  console.log(inputLIst)
   const buttonElement = formElement.querySelector(selectors.submitButtonSelector);
+  console.log(buttonElement)
 
   toggleButtonState(inputList, buttonElement, selectors.inactiveButtonClass);
+  console.log("I'm inside toggleButtonState in setEventListeners")
   inputList.forEach((inputElement) => {
     inputElement.addEventListener('input', () => {
       isValid(formElement, inputElement, selectors);
@@ -39,8 +43,11 @@ const setEventListeners = (formElement, selectors) => {
 };
 
 export const enableValidation = ({formSelector, ...selectors}) => {
+  console.log("I'm inside enableValidation")
   const formList = Array.from(document.querySelectorAll(formSelector));
+  console.log(formList)
   formList.forEach((formElement) => {
+    console.log(`This form is processed: ${formElement}`)
     setEventListeners(formElement, selectors);
   })
 }
