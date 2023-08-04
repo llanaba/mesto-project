@@ -14,24 +14,16 @@ const cardTemplate = document.querySelector('#card').content;
 const placeInput = popupAddCard.querySelector('input[name="place-name"]');
 const imgLinkInput = popupAddCard.querySelector('input[name="place-link"]');
 const saveCardButton = popupAddCard.querySelector('.popup__button-save');
-const currentUserId = getUser('me').then((userData) => {
-  // console.log(userData._id);
-})
 
-export function renderInitialCards() {
+export function renderInitialCards(userId) {
   getInitialCards()
   .then((cardsData) => {
-    addExistingCards(cardsData);
+    addExistingCards(cardsData, userId);
   })
 }
 
-export function addExistingCards(cardList) {
-  // for (let i = cardList.length - 1; i > 0; i--) {
+export function addExistingCards(cardList, userId) {
     for (let i = cardList.length - 1; i >= 0; i--) {
-    // console.log(`${cardList[i]['name']}: ${cardList[i]['createdAt']})`);
-    // console.log(currentUserId)
-    // console.log(`Owner: ${cardList[i]['owner']['_id']}`);
-    console.log(cardList[i]['likes']);
     const cardData = {
       name: cardList[i]['name'],
       link: cardList[i]['link'],
@@ -40,23 +32,32 @@ export function addExistingCards(cardList) {
       likes: cardList[i]['likes'],
       cardOwnerId: cardList[i]['owner']['_id'],
     }
-    renderCard(cardData, cardTemplate);
+    renderCard(cardData, cardTemplate, userId);
   }
 }
 
-function renderCard(cardData, cardTemplate) {
-  cardsContainer.prepend(createCard(cardData, cardTemplate))
+function renderCard(cardData, cardTemplate, userId) {
+  console.log(`Here is userID in renderCard: ${userId}`)
+  cardsContainer.prepend(createCard(cardData, cardTemplate, userId))
 }
 
 function userLikesCard(userId, cardFans) {
-  const userLikes = cardFans.some(function(fan) {
-    return fan._id === userId
-  });
+  console.log("I'm inside userLikesCard")
+  console.log(`Here is userID in userLikesCard: ${userId}`)
+  console.log(`Here is cardFans in userLikesCard: ${cardFans}`)
+  if (cardFans) {
+    const userLikes = cardFans.some(function(fan) {
+      console.log(fan)
+      return fan._id === userId
+    });
+    return userLikes
+  }
   // console.log(userLikes)
-  return userLikes
+  return false
 }
 
-function createCard(cardData, cardTemplate) {
+function createCard(cardData, cardTemplate, userId) {
+  console.log(`Here is userID in createCard: ${userId}`)
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
   const cardTitleElement = cardElement.querySelector('h2');
   const cardImageElement = cardElement.querySelector('.card__image');
@@ -68,20 +69,22 @@ function createCard(cardData, cardTemplate) {
   cardImageElement.src = cardData.link;
   likeCounter.textContent = cardData.likesCount;
 
-  // console.log(`Here's the owner's id: ${cardData.cardOwnerId}`)
-  getUser('me')
-    .then((userData) => {
-      if (userData._id === cardData.cardOwnerId || cardData.cardOwnerId === undefined) {
-        // console.log(`user_id: ${userData._id}, card ownerID: ${cardData.cardOwnerId}`);
-        buttonBinElement.style.display = "block";
-      } else {
-        // console.log('different!')
-      }
-      console.log(userLikesCard(userData._id, cardData.likes))
-      if (userLikesCard(userData._id, cardData.likes)) {
-        buttonLikeElement.classList.add('card__button-like_active')
-      }
-    })
+  if (userId === cardData.cardOwnerId || cardData.cardOwnerId === undefined) {
+    buttonBinElement.style.display = "block";
+  }
+  if (userLikesCard(userId, cardData.likes)) {
+    buttonLikeElement.classList.add('card__button-like_active')
+  }
+  // getUser('me')
+  //   .then((userData) => {
+  //     if (userData._id === cardData.cardOwnerId || cardData.cardOwnerId === undefined) {
+  //       buttonBinElement.style.display = "block";
+  //     } else {
+  //     }
+  //     if (userLikesCard(userData._id, cardData.likes)) {
+  //       buttonLikeElement.classList.add('card__button-like_active')
+  //     }
+  //   })
 
   buttonLikeElement.addEventListener('click', function(evt) {
     handleLikeClick(evt, cardData['cardId']);
@@ -107,7 +110,6 @@ function handleLikeClick(evt, cardId) {
   } else {
     method = 'PUT'
   }
-  console.log(method)
   likeCard(cardId, method)
     .then((cardData) => {
       const likes = evt.target.nextElementSibling;
@@ -121,20 +123,27 @@ export function handleAddCardClick(popupAddCard) {
 }
 
 export function handleCardFormSubmit(evt, popupAddCard) {
+  console.log("I'm inside handleCardFormSubmit")
   const cardData = {
     name: placeInput.value,
     link: imgLinkInput.value
   }
   postNewCard(cardData.name, cardData.link)
     .then((newCardInfo) => {
+      console.log(`Here's new card Info: ${newCardInfo}`)
       cardData.cardId = newCardInfo._id
+      cardData.cardOwnerId = newCardInfo.owner._id
+      console.log(`card owner: ${newCardInfo.owner._id}`)
       cardData.likesCount = newCardInfo.likes.length
-      // console.log(`New Card info1: ${newCardInfo.name}`)
-      // console.log(`New Card info2: ${newCardInfo.link}`)
-      // console.log(`New Card info3: ${newCardInfo._id}`)
+      const userId = newCardInfo.owner._id
+      console.log(userId)
+      return userId
     })
-  renderCard(cardData, cardTemplate);
-  evt.target.reset()
-  toggleButtonState([placeInput, imgLinkInput], saveCardButton, 'popup__button-save_disabled')
-  closePopup(popupAddCard);
+    .then((userId) => {
+      console.log(`userID: ${userId}`)
+      renderCard(cardData, cardTemplate, userId);
+      evt.target.reset()
+      toggleButtonState([placeInput, imgLinkInput], saveCardButton, 'popup__button-save_disabled')
+      closePopup(popupAddCard);
+    })
 }

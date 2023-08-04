@@ -77,6 +77,13 @@ function handleEditAvatarFormSubmit(evt) {
   closePopup(popupAvatarEdit);
 }
 
+function loadInitialPage() {
+  getUser('me')
+  .then((userData) => {
+    renderInitialCards(userData._id);
+  })
+}
+
 function renderUserInfo(userId) {
   getUser(userId)
   .then((userData) => {
@@ -94,7 +101,7 @@ enableValidation(validationSelectors);
 renderUserInfo('me');
 
 // Filling the page with existing data
-renderInitialCards();
+loadInitialPage();
 
 
 // * * * BUTTON AND FORM LISTENERS * * *
