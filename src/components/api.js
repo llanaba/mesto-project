@@ -12,7 +12,10 @@ export const getUser = (id) => {
     headers: config.headers
   })
     .then((res) => {
-      return res.json();
+      if (res.ok) {
+        return res.json();
+      }
+      return Promise.reject(`Ошибка: ${res.status}`)
     })
 }
 
@@ -22,13 +25,16 @@ export const getInitialCards = () => {
     headers: config.headers
   })
     .then((res) => {
-      return res.json();
+      if (res.ok) {
+        return res.json();
+      }
+      return Promise.reject(`Ошибка: ${res.status}`)
     })
 }
 
 export const updateProfileInfo = (userName, userDescription) => {
   const url = `${config.baseUrl}/users/me`;
-  fetch(url, {
+  return fetch(url, {
     method: 'PATCH',
     headers: config.headers,
     body: JSON.stringify({
@@ -36,10 +42,14 @@ export const updateProfileInfo = (userName, userDescription) => {
       about: userDescription
     })
   })
+    .then((res) => {
+      if (!res.ok) {
+        return Promise.reject(`Ошибка: ${res.status}`)
+      }
+    })
 }
 
 export const postNewCard = (cardName, imageLink) => {
-  console.log("I'm adding a new card")
   const url = `${config.baseUrl}/cards`;
   return fetch(url, {
     method: 'POST',
@@ -58,28 +68,33 @@ export const postNewCard = (cardName, imageLink) => {
 }
 
 export const deleteCard = (cardId) => {
-  console.log("I'm deleting cards")
   const url = `${config.baseUrl}/cards/${cardId}`
   return fetch(url, {
     method: 'DELETE',
     headers: config.headers,
   })
+    .then((res) => {
+      if (!res.ok) {
+        return Promise.reject(`Ошибка: ${res.status}`)
+      }
+    })
 }
 
 export const likeCard = (cardId, method) => {
-  console.log("I'm liking cards")
   const url = `${config.baseUrl}/cards/likes/${cardId}`
   return fetch(url, {
     method: method,
     headers: config.headers,
   })
   .then((res) => {
+    if (res.ok) {
       return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`)
   })
 }
 
 export const updateAvatar = (avatarUrl) => {
-  console.log("I'm about to update avatar")
   const url = `${config.baseUrl}/users/me/avatar`
   return fetch(url, {
     method: 'PATCH',
@@ -89,12 +104,17 @@ export const updateAvatar = (avatarUrl) => {
     })
   })
   .then((res) => {
-    return res.json();
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`)
   })
 }
 
-export function renderLoading(isloading, saveButton) {
+export const renderLoading = (isLoading, saveButton, origText) => {
   if (isLoading) {
-    saveButton.innerText = "Сохранение..."
+    saveButton.innerText = "Сохранение...";
+  } else {
+    saveButton.innerText = origText;
   }
 }

@@ -1,13 +1,11 @@
 import './index.css'
 
-// import { initialCards } from '../components/cards_data.js';
 import { enableValidation } from '../components/validate.js';
 import { openPopup, closePopup } from '../components/modal.js';
 import {
-  // addExistingCards,
   handleAddCardClick,
   handleCardFormSubmit,
-  renderInitialCards
+  renderInitialCards,
   } from '../components/cards.js';
 
 import { setClosePopupEventListeners } from '../components/modal.js';
@@ -16,6 +14,7 @@ import {
   getUser,
   updateProfileInfo,
   updateAvatar,
+  renderLoading,
   } from '../components/api.js';
 
 const validationSelectors = {
@@ -39,11 +38,16 @@ const popupAvatarEdit = document.querySelector('.popup_edit-avatar');
 const addCardForm = document.querySelector('form[name="new-card-form"]');
 const addCardButton = document.querySelector('.profile__button-add');
 
+
 // Profile-related buttons, form, fields and values
 const editProfileButton = document.querySelector('.profile__button-edit');
 const editProfileForm = document.querySelector('form[name="edit-profile-form"]');
+const editProfileSubmitButton = editProfileForm.querySelector('.popup__button-save');
+const editProfileSubmitButtonOrigText = editProfileSubmitButton.textContent;
 const editAvatarButton = document.querySelector('.profile__avatar-overlay');
 const editAvatarForm = document.querySelector('.form[name="edit-avatar-form"]');
+const editAvatarSubmitButton = editAvatarForm.querySelector('.popup__button-save')
+const editAvatarSubmitButtonOrigText = editAvatarSubmitButton.textContent;
 const avatarInput = popupAvatarEdit.querySelector('input[name="avatar-link"]');
 const nameInput = popupProfileEdit.querySelector('input[name="user-name"]');
 const descriptionInput = popupProfileEdit.querySelector('input[name="user-description"]');
@@ -61,9 +65,18 @@ function handleEditProfileClick() {
 
 function handleEditProfileFormSubmit(evt) {
   evt.preventDefault();
+  renderLoading(true, editProfileSubmitButton)
   updateProfileInfo(nameInput.value, descriptionInput.value)
-  closePopup(popupProfileEdit);
-  renderUserInfo('me');
+    .then(() => {
+      renderUserInfo('me');
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      renderLoading(false, editProfileSubmitButton, editProfileSubmitButtonOrigText)
+      closePopup(popupProfileEdit);
+    })
 }
 
 function handleEditAvatarClick() {
@@ -72,15 +85,26 @@ function handleEditAvatarClick() {
 
 function handleEditAvatarFormSubmit(evt) {
   evt.preventDefault();
+  renderLoading(true, editAvatarSubmitButton);
   updateAvatar(avatarInput.value)
-    .then(() => {renderUserInfo('me')});
-  closePopup(popupAvatarEdit);
+    .then(() => {renderUserInfo('me')})
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      renderLoading(false, editAvatarSubmitButton, editAvatarSubmitButtonOrigText)
+      editAvatarForm.reset();
+      closePopup(popupAvatarEdit);
+    })
 }
 
 function loadInitialPage() {
   getUser('me')
   .then((userData) => {
     renderInitialCards(userData._id);
+  })
+  .catch((err) => {
+    console.log(err);
   })
 }
 
@@ -91,6 +115,9 @@ function renderUserInfo(userId) {
     userDescription.textContent = userData.about
     userAvatar.src = userData.avatar
   })
+  .catch((err) => {
+    console.log(err);
+  })
 }
 
 // * * * MAIN CODE * * *
@@ -98,6 +125,7 @@ function renderUserInfo(userId) {
 // Enabling validation for all forms on the site
 enableValidation(validationSelectors);
 
+// Getting and rendering info about the current user
 renderUserInfo('me');
 
 // Filling the page with existing data
