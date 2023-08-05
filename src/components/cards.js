@@ -10,11 +10,21 @@ import {
 
 const cardsContainer = document.querySelector('.cards__list');
 const popupAddCard = document.querySelector('.popup_add-card');
+const popupConfirmDelete = document.querySelector('.popup_confirm-delete');
 const cardTemplate = document.querySelector('#card').content;
 const placeInput = popupAddCard.querySelector('input[name="place-name"]');
 const imgLinkInput = popupAddCard.querySelector('input[name="place-link"]');
 const saveCardButton = popupAddCard.querySelector('.popup__button-save');
 const saveCardButtonOrigText = saveCardButton.textContent;
+let performDelete;
+
+function configurePerformDelete(deletionFunction) {
+  performDelete = deletionFunction
+}
+
+export function confirmDeletion() {
+  performDelete();
+}
 
 export function renderInitialCards(userId) {
   getInitialCards()
@@ -77,7 +87,17 @@ function createCard(cardData, cardTemplate, userId) {
     handleLikeClick(evt, cardData['cardId']);
   });
   buttonBinElement.addEventListener('click', function(evt) {
-    handleRemoveCardClick(evt, cardData['cardId']);
+    openPopup(popupConfirmDelete);
+    configurePerformDelete(() => {
+      deleteCard(cardData['cardId'])
+        .then(() => cardElement.remove())
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          closePopup(popupConfirmDelete);
+        })
+    })
   });
   cardImageElement.addEventListener('click', function() {
     handleViewImageClick(cardImageElement.src, cardTitleElement);
@@ -85,10 +105,6 @@ function createCard(cardData, cardTemplate, userId) {
   return cardElement
 }
 
-function handleRemoveCardClick(evt, cardId) {
-  deleteCard(cardId)
-    .then(() => evt.target.closest('.card').remove());
-}
 
 function handleLikeClick(evt, cardId) {
   let method

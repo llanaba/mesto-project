@@ -6,6 +6,7 @@ import {
   handleAddCardClick,
   handleCardFormSubmit,
   renderInitialCards,
+  confirmDeletion,
   } from '../components/cards.js';
 
 import { setClosePopupEventListeners } from '../components/modal.js';
@@ -37,7 +38,7 @@ const popupAvatarEdit = document.querySelector('.popup_edit-avatar');
 // Card-related buttons and template
 const addCardForm = document.querySelector('form[name="new-card-form"]');
 const addCardButton = document.querySelector('.profile__button-add');
-
+const deleteCardForm = document.querySelector('form[name="confirm-delete-form"]')
 
 // Profile-related buttons, form, fields and values
 const editProfileButton = document.querySelector('.profile__button-edit');
@@ -148,6 +149,12 @@ addCardForm.addEventListener('submit', function(evt) {
   evt.preventDefault();
   handleCardFormSubmit(evt, popupAddCard);
 });
+
+// Deleting Card Form
+deleteCardForm.addEventListener('submit', function(evt) {
+  evt.preventDefault();
+  confirmDeletion();
+})
 
 // Setting closing listeners for all popups
 popups.forEach((popup) => {
