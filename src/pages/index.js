@@ -109,7 +109,10 @@ function loadInitialPage() {
     getInitialCards()
   ])
     .then((values) => {
-      renderInitialCards(values[0]._id, values[1])
+      renderInitialCards(values[0]._id, values[1]);
+    })
+    .catch((err) => {
+      console.log(err);
     })
 }
 
