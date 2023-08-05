@@ -16,6 +16,7 @@ import {
   updateProfileInfo,
   updateAvatar,
   renderLoading,
+  getInitialCards,
   } from '../components/api.js';
 
 const validationSelectors = {
@@ -103,13 +104,13 @@ function handleEditAvatarFormSubmit(evt) {
 }
 
 function loadInitialPage() {
-  getUser('me')
-  .then((userData) => {
-    renderInitialCards(userData._id);
-  })
-  .catch((err) => {
-    console.log(err);
-  })
+  Promise.all([
+    getUser('me'),
+    getInitialCards()
+  ])
+    .then((values) => {
+      renderInitialCards(values[0]._id, values[1])
+    })
 }
 
 function renderUserInfo(userId) {

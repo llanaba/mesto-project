@@ -2,7 +2,6 @@ import { openPopup, closePopup, handleViewImageClick } from './modal.js';
 import { toggleButtonState } from './validate.js';
 import {
   deleteCard,
-  getInitialCards,
   postNewCard,
   likeCard,
   renderLoading,
@@ -26,14 +25,8 @@ export function confirmDeletion() {
   performDelete();
 }
 
-export function renderInitialCards(userId) {
-  getInitialCards()
-  .then((cardsData) => {
+export function renderInitialCards(userId, cardsData) {
     addExistingCards(cardsData, userId);
-  })
-  .catch((err) => {
-    console.log(err);
-  })
 }
 
 export function addExistingCards(cardList, userId) {
