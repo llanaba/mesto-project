@@ -2,7 +2,6 @@ import { openPopup, closePopup, handleViewImageClick } from './modal.js';
 import { toggleButtonState } from './validate.js';
 import {
   deleteCard,
-  getInitialCards,
   postNewCard,
   likeCard,
   renderLoading,
@@ -26,14 +25,8 @@ export function confirmDeletion() {
   performDelete();
 }
 
-export function renderInitialCards(userId) {
-  getInitialCards()
-  .then((cardsData) => {
+export function renderInitialCards(userId, cardsData) {
     addExistingCards(cardsData, userId);
-  })
-  .catch((err) => {
-    console.log(err);
-  })
 }
 
 export function addExistingCards(cardList, userId) {
@@ -90,12 +83,12 @@ function createCard(cardData, cardTemplate, userId) {
     openPopup(popupConfirmDelete);
     configurePerformDelete(() => {
       deleteCard(cardData['cardId'])
-        .then(() => cardElement.remove())
+        .then(() => {
+          cardElement.remove()
+          closePopup(popupConfirmDelete);
+        })
         .catch((err) => {
           console.log(err);
-        })
-        .finally(() => {
-          closePopup(popupConfirmDelete);
         })
     })
   });
@@ -144,14 +137,13 @@ export function handleCardFormSubmit(evt, popupAddCard) {
     })
     .then((userId) => {
       renderCard(cardData, cardTemplate, userId);
+      toggleButtonState([placeInput, imgLinkInput], saveCardButton, 'popup__button-save_disabled');
+      renderLoading(false, saveCardButton, saveCardButtonOrigText);
+      evt.target.reset();
+      toggleButtonState([placeInput, imgLinkInput], saveCardButton, 'popup__button-save_disabled');
+      closePopup(popupAddCard);
     })
     .catch((err) => {
       console.log(err);
-    })
-    .finally(() => {
-      toggleButtonState([placeInput, imgLinkInput], saveCardButton, 'popup__button-save_disabled')
-      renderLoading(false, saveCardButton, saveCardButtonOrigText)
-      evt.target.reset()
-      closePopup(popupAddCard);
     })
 }

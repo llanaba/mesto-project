@@ -1,6 +1,6 @@
 import './index.css'
 
-import { enableValidation } from '../components/validate.js';
+import { enableValidation, toggleButtonState } from '../components/validate.js';
 import { openPopup, closePopup } from '../components/modal.js';
 import {
   handleAddCardClick,
@@ -16,6 +16,7 @@ import {
   updateProfileInfo,
   updateAvatar,
   renderLoading,
+  getInitialCards,
   } from '../components/api.js';
 
 const validationSelectors = {
@@ -71,12 +72,12 @@ function handleEditProfileFormSubmit(evt) {
     .then(() => {
       renderUserInfo('me');
     })
-    .catch((err) => {
-      console.log(err);
-    })
-    .finally(() => {
+    .then(() => {
       renderLoading(false, editProfileSubmitButton, editProfileSubmitButtonOrigText)
       closePopup(popupProfileEdit);
+    })
+    .catch((err) => {
+      console.log(err);
     })
 }
 
@@ -88,25 +89,28 @@ function handleEditAvatarFormSubmit(evt) {
   evt.preventDefault();
   renderLoading(true, editAvatarSubmitButton);
   updateAvatar(avatarInput.value)
-    .then(() => {renderUserInfo('me')})
-    .catch((err) => {
-      console.log(err);
+    .then(() => {
+      renderUserInfo('me')
     })
-    .finally(() => {
+    .then(() => {
       renderLoading(false, editAvatarSubmitButton, editAvatarSubmitButtonOrigText)
       editAvatarForm.reset();
+      toggleButtonState([avatarInput], editAvatarSubmitButton, 'popup__button-save_disabled')
       closePopup(popupAvatarEdit);
+    })
+    .catch((err) => {
+      console.log(err);
     })
 }
 
 function loadInitialPage() {
-  getUser('me')
-  .then((userData) => {
-    renderInitialCards(userData._id);
-  })
-  .catch((err) => {
-    console.log(err);
-  })
+  Promise.all([
+    getUser('me'),
+    getInitialCards()
+  ])
+    .then((values) => {
+      renderInitialCards(values[0]._id, values[1])
+    })
 }
 
 function renderUserInfo(userId) {
