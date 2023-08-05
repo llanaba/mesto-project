@@ -6,17 +6,21 @@ const config = {
   }
 }
 
+function getResponseData(res) {
+  if (!res.ok) {
+    return Promise.reject(`Ошибка: ${res.status}`);
+  }
+  return res.json()
+}
+
 export const getUser = (id) => {
   const url = `${config.baseUrl}/users/${id}`;
   return fetch(url, {
     headers: config.headers
   })
     .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`)
-    })
+      return getResponseData(res);
+    });
 }
 
 export const getInitialCards = () => {
@@ -25,11 +29,8 @@ export const getInitialCards = () => {
     headers: config.headers
   })
     .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`)
-    })
+      return getResponseData(res);
+    });
 }
 
 export const updateProfileInfo = (userName, userDescription) => {
@@ -43,10 +44,8 @@ export const updateProfileInfo = (userName, userDescription) => {
     })
   })
     .then((res) => {
-      if (!res.ok) {
-        return Promise.reject(`Ошибка: ${res.status}`)
-      }
-    })
+      return getResponseData(res);
+    });
 }
 
 export const postNewCard = (cardName, imageLink) => {
@@ -60,10 +59,7 @@ export const postNewCard = (cardName, imageLink) => {
     })
   })
   .then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
+    return getResponseData(res);
   });
 }
 
@@ -74,9 +70,7 @@ export const deleteCard = (cardId) => {
     headers: config.headers,
   })
     .then((res) => {
-      if (!res.ok) {
-        return Promise.reject(`Ошибка: ${res.status}`)
-      }
+      return getResponseData(res);
     })
 }
 
@@ -87,10 +81,7 @@ export const likeCard = (cardId, method) => {
     headers: config.headers,
   })
   .then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`)
+    return getResponseData(res);
   })
 }
 
@@ -104,10 +95,7 @@ export const updateAvatar = (avatarUrl) => {
     })
   })
   .then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`)
+    return getResponseData(res);
   })
 }
 

@@ -90,12 +90,12 @@ function createCard(cardData, cardTemplate, userId) {
     openPopup(popupConfirmDelete);
     configurePerformDelete(() => {
       deleteCard(cardData['cardId'])
-        .then(() => cardElement.remove())
+        .then(() => {
+          cardElement.remove()
+          closePopup(popupConfirmDelete);
+        })
         .catch((err) => {
           console.log(err);
-        })
-        .finally(() => {
-          closePopup(popupConfirmDelete);
         })
     })
   });
@@ -144,14 +144,13 @@ export function handleCardFormSubmit(evt, popupAddCard) {
     })
     .then((userId) => {
       renderCard(cardData, cardTemplate, userId);
+      toggleButtonState([placeInput, imgLinkInput], saveCardButton, 'popup__button-save_disabled');
+      renderLoading(false, saveCardButton, saveCardButtonOrigText);
+      evt.target.reset();
+      toggleButtonState([placeInput, imgLinkInput], saveCardButton, 'popup__button-save_disabled');
+      closePopup(popupAddCard);
     })
     .catch((err) => {
       console.log(err);
-    })
-    .finally(() => {
-      toggleButtonState([placeInput, imgLinkInput], saveCardButton, 'popup__button-save_disabled')
-      renderLoading(false, saveCardButton, saveCardButtonOrigText)
-      evt.target.reset()
-      closePopup(popupAddCard);
     })
 }
