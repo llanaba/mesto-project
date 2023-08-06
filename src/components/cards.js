@@ -133,11 +133,7 @@ export function handleCardFormSubmit(evt, popupAddCard) {
       cardData.cardOwnerId = newCardInfo.owner._id
       cardData.likesCount = newCardInfo.likes.length
       const userId = newCardInfo.owner._id
-      return userId
-    })
-    .then((userId) => {
       renderCard(cardData, cardTemplate, userId);
-      toggleButtonState([placeInput, imgLinkInput], saveCardButton, 'popup__button-save_disabled');
       renderLoading(false, saveCardButton, saveCardButtonOrigText);
       evt.target.reset();
       toggleButtonState([placeInput, imgLinkInput], saveCardButton, 'popup__button-save_disabled');

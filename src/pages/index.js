@@ -109,7 +109,9 @@ function loadInitialPage() {
     getInitialCards()
   ])
     .then((values) => {
-      renderInitialCards(values[0]._id, values[1]);
+      let [userData, cardsData] = values;
+      renderProfileOnPage(userData);
+      renderInitialCards(userData._id, cardsData);
     })
     .catch((err) => {
       console.log(err);
@@ -119,22 +121,22 @@ function loadInitialPage() {
 function renderUserInfo(userId) {
   getUser(userId)
   .then((userData) => {
-    userName.textContent = userData.name
-    userDescription.textContent = userData.about
-    userAvatar.src = userData.avatar
+    renderProfileOnPage(userData);
   })
   .catch((err) => {
     console.log(err);
   })
 }
 
+function renderProfileOnPage(userData) {
+  userName.textContent = userData.name
+  userDescription.textContent = userData.about
+  userAvatar.src = userData.avatar
+}
 // * * * MAIN CODE * * *
 
 // Enabling validation for all forms on the site
 enableValidation(validationSelectors);
-
-// Getting and rendering info about the current user
-renderUserInfo('me');
 
 // Filling the page with existing data
 loadInitialPage();
