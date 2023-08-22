@@ -1,3 +1,8 @@
+import Card from '../components/Card.js'
+import Section from '../components/Section.js'
+
+// старые импорты
+
 import './index.css'
 
 import { enableValidation, toggleButtonState } from '../components/validate.js';
@@ -111,7 +116,26 @@ function loadInitialPage() {
     .then((values) => {
       let [userData, cardsData] = values;
       renderProfileOnPage(userData);
-      renderInitialCards(userData._id, cardsData);
+      // renderInitialCards(userData._id, cardsData);
+      // Updated way to fill the page with existing data
+      console.log("I'm about to make initialCardList")
+      console.log(document.querySelector('#card'))
+      // console.log(cardItems)
+      const initialCardList = new Section({
+        items: cardsData,
+        // items: cardItems,
+        renderer: (item) => {
+          console.log("I'm inside renderer in index.js")
+          // console.log(document.querySelector('#card'))
+          const card = new Card(item, '#card');
+          console.log("card inside renderer in loadInitialPage: ")
+          console.log(card)
+          const cardElement = card.generate();
+          initialCardList.addItem(cardElement);
+        }
+      }, '.cards__list');
+      // console.log(initialCardList);
+      initialCardList.renderItems();
     })
     .catch((err) => {
       console.log(err);

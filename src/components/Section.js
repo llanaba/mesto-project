@@ -1,6 +1,11 @@
 export default class Section {
   constructor ({ items, renderer }, containerSelector) {
     this._renderedItems = items;
+    console.log("I'm in SECTION")
+    console.log(document.querySelector('#card'))
+    // console.log(items)
+    // console.log(renderer)
+    // console.log(containerSelector)
     this._renderer = renderer;
     this._container = document.querySelector(containerSelector);
   }
@@ -10,12 +15,19 @@ export default class Section {
     this._container.append(element);
   }
 
+  clear() {
+    this._container.innerHTML = '';
+  }
+
   // creating element markup
   renderItems () {
-    const rezItems = '';
+    console.log("I'm in renderItems")
+    console.log(document.querySelector('#card'))
+    // this.clear();
+
     this._renderedItems.forEach(item => {
-      rezItems.after(this._renderer(item));
+      console.log(document.querySelector('#card'))
+      this._renderer(item);
     });
-    return rezItems;
   }
 }
