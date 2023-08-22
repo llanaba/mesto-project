@@ -36,23 +36,19 @@ export default class Aapi {
         return this._getResponseData(res);
       });
   }
-}
 
-// export const getUser = (id) => {
-//   const url = `${config.baseUrl}/users/${id}`;
-//   return fetch(url, {
-//     headers: config.headers
-//   })
-//     .then((res) => {
-//       return getResponseData(res);
-//     });
-// }
-// export const getInitialCards = () => {
-//   const url = `${config.baseUrl}/cards`;
-//   return fetch(url, {
-//     headers: config.headers
-//   })
-//     .then((res) => {
-//       return getResponseData(res);
-//     });
-// }
+  updateProfileInfo (userName, userDescription) {
+    const url = `${config.baseUrl}/users/me`;
+    return fetch(url, {
+      method: 'PATCH',
+      headers: this._headers,
+      body: JSON.stringify({
+        name: userName,
+        about: userDescription
+      })
+    })
+      .then((res) => {
+        return getResponseData(res);
+      });
+  }
+}

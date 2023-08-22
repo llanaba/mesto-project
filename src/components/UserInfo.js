@@ -1,24 +1,35 @@
-// VERSION 2
-
 export default class UserInfo {
-  constructor ({nameSelector, infoSelector, avatarSelector}) {
+  constructor (
+    {nameSelector, infoSelector, avatarSelector},
+    getInfoApi,
+    sefInfoApi
+  ) {
     this._userName = document.querySelector(nameSelector);
     this._userAbout = document.querySelector(infoSelector);
     this._userAvatar = document.querySelector(avatarSelector);
+
+    this._getInfoApi = getInfoApi
   }
 
   // getting user information from the server and returning this information
-  getUserInfo (apiMethod) {
+  getUserInfo () {
     console.log("I'm inside getUserInfo")
-    this.userInfo = apiMethod()
+    this.userInfo = this._getInfoApi()
     return this.userInfo
+  }
+
+  renderUserInfo ({ name, about, avatar }) {
+    this._userName.textContent = name;
+    this._userAbout.textContent = about;
+    this._userAvatar.src = avatar;
   }
 
   // so far - just renders the info on the page, doesn't send anything to the server
   setUserInfo ({ name, about, avatar }) {
-    this._userName.textContent = name;
-    this._userAbout.textContent = about;
-    this._userAvatar.src = avatar;
+    this.renderUserInfo({ name, about, avatar })
+    // this._userName.textContent = name;
+    // this._userAbout.textContent = about;
+    // this._userAvatar.src = avatar;
   }
 }
 
