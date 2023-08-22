@@ -40,7 +40,7 @@ function loadInitialPage() {
           console.log("I'm inside renderer in index.js")
           const card = new Card(item, '#card');
           console.log("card inside renderer in loadInitialPage: ")
-          const cardElement = card.generate();
+          const cardElement = card.generate(userData);
           initialCardList.addItem(cardElement);
         }
       }, '.cards__list');
