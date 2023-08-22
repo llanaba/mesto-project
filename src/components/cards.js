@@ -1,11 +1,11 @@
 import { openPopup, closePopup, handleViewImageClick } from './modal.js';
 import { toggleButtonState } from './validate.js';
-import {
-  deleteCard,
-  postNewCard,
-  likeCard,
-  renderLoading,
-} from './api.js';
+// import {
+//   deleteCard,
+//   postNewCard,
+//   likeCard,
+//   renderLoading,
+// } from './api.js';
 
 const cardsContainer = document.querySelector('.cards__list');
 const popupAddCard = document.querySelector('.popup_add-card');

@@ -1,6 +1,10 @@
 import Card from '../components/Card.js'
 import Section from '../components/Section.js'
-
+import UserInfo from '../components/UserInfo.js'
+import Api from '../components/Aapi.js'
+import {
+  config
+} from '../utils/constants.js'
 // старые импорты
 
 import './index.css'
@@ -16,13 +20,13 @@ import {
 
 import { setClosePopupEventListeners } from '../components/modal.js';
 
-import {
-  getUser,
-  updateProfileInfo,
-  updateAvatar,
-  renderLoading,
-  getInitialCards,
-  } from '../components/api.js';
+// import {
+//   getUser,
+//   updateProfileInfo,
+//   updateAvatar,
+//   renderLoading,
+//   getInitialCards,
+//   } from '../components/api.js';
 
 const validationSelectors = {
   formSelector: '.form',
@@ -108,33 +112,43 @@ function handleEditAvatarFormSubmit(evt) {
     })
 }
 
+// ОБНОВЛЕННАЯ ФУНКЦИЯ LOADINITIALPAGE
 function loadInitialPage() {
+  console.log("I'm inside loadInitialPage")
+  // Теперь данные юзера - это экземпляр класса UserInfo
+  // В будущем селекторы надо будет закинуть в utils/constants.js для порядка
+  const user = new UserInfo(
+    {'nameSelector': 'h1.profile__name',
+    'infoSelector': 'p.profile__description',
+    'avatarSelector': '.profile__avatar'
+    })
   Promise.all([
-    getUser('me'),
-    getInitialCards()
+    // в этой строке передаем методу getUserInfo метод класса api
+    // чтобы не потерять контекст, привязываем api через bind (1.5 часа протупила на потере контекста тут)
+    user.getUserInfo(api.getUser.bind(api)),
+    // другим методом api добываем карточки с сервера
+    api.getInitialCards()
   ])
     .then((values) => {
       let [userData, cardsData] = values;
-      renderProfileOnPage(userData);
-      // renderInitialCards(userData._id, cardsData);
-      // Updated way to fill the page with existing data
+      // renderProfileOnPage(userData);
+      console.log("I'm about to render user profile on page")
+      // эта строка отображает актуальные данные в браузере. Скорее всего, тут
+      // должно идти по другой логике, но пока так
+      user.setUserInfo(userData)
       console.log("I'm about to make initialCardList")
-      console.log(document.querySelector('#card'))
-      // console.log(cardItems)
+      // карточки теперь - экземпляр класса Section, добавляются по тому же принципу, как
+      // в интернет-магазине роботов из тренажера
       const initialCardList = new Section({
         items: cardsData,
-        // items: cardItems,
         renderer: (item) => {
           console.log("I'm inside renderer in index.js")
-          // console.log(document.querySelector('#card'))
           const card = new Card(item, '#card');
           console.log("card inside renderer in loadInitialPage: ")
-          console.log(card)
           const cardElement = card.generate();
           initialCardList.addItem(cardElement);
         }
       }, '.cards__list');
-      // console.log(initialCardList);
       initialCardList.renderItems();
     })
     .catch((err) => {
@@ -159,8 +173,9 @@ function renderProfileOnPage(userData) {
 }
 // * * * MAIN CODE * * *
 
+const api = new Api(config)
 // Enabling validation for all forms on the site
-enableValidation(validationSelectors);
+// enableValidation(validationSelectors);
 
 // Filling the page with existing data
 loadInitialPage();
