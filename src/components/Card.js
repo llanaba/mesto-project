@@ -28,18 +28,38 @@ export default class Card {
     return false
   }
 
+  _handleLikeClick(evt, cardId, api) {
+    let method
+    if (evt.target.classList.contains('card__button-like_active')) {
+      console.log("УЖЕ ЛАЙКНУТО")
+      method = 'DELETE'
+    } else {
+      method = 'PUT'
+    }
+    api.likeCard(cardId, method)
+      .then((cardData) => {
+        const likes = evt.target.nextElementSibling;
+        likes.textContent = cardData.likes.length;
+        evt.target.classList.toggle('card__button-like_active');
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+
   // Пока здесь стоит заглушка, проверяющая, работает ли установка слушателей
-  _setEventListeners() {
+  _setEventListeners(api) {
     // this._buttonLikeElement = this._element.querySelector('.card__button-like')
     this._buttonLikeElement.addEventListener(
-      'click', () => {
+      'click', (evt) => {
         console.log('YOU CLICKED')
-        this._element.querySelector('.card__button-like').classList.add('card__button-like_active')
+        // api.likeCard(this._cardId, 'DELETE')
+        this._handleLikeClick(evt, this._cardId, api)
       }
     )
   }
   // возвращает полностью готовый элемент карточки
-  generate(userData) {
+  generate(userData, api) {
     console.log("I'm inside generate")
     console.log(this._name)
     this._element = this._getElement();
@@ -61,7 +81,7 @@ export default class Card {
       this._buttonBinElement.style.display = "block";
     }
     // вешаем слушалки
-    this._setEventListeners();
+    this._setEventListeners(api);
     return this._element
   }
 }

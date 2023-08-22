@@ -26,6 +26,17 @@ export default class Aapi {
       });
   }
 
+  likeCard (cardId, method) {
+    const url = `${this._baseUrl}/cards/likes/${cardId}`
+    return fetch(url, {
+      method: method,
+      headers: this._headers
+    })
+      .then((res) => {
+        return this._getResponseData(res);
+      })
+  }
+
   getUser () {
     const url = `${this._baseUrl}/users/me`;
     return fetch(url, {
