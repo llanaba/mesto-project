@@ -49,14 +49,14 @@ export default class Card {
 
   // Пока здесь стоит заглушка, проверяющая, работает ли установка слушателей
   _setEventListeners(api) {
-    this._buttonLikeElement.addEventListener('click', (evt) => {
+    // this._buttonLikeElement = this._element.querySelector('.card__button-like')
+    this._buttonLikeElement.addEventListener(
+      'click', (evt) => {
         console.log('YOU CLICKED')
+        // api.likeCard(this._cardId, 'DELETE')
         this._handleLikeClick(evt, this._cardId, api)
       }
     )
-    this._buttonBinElement.addEventListener('click', (evt) => {
-      console.log('Карточку хотят удалить')
-    })
   }
   // возвращает полностью готовый элемент карточки
   generate(userData, api) {

@@ -3,6 +3,9 @@ export default class Section {
     this._renderedItems = items;
     console.log("I'm in SECTION")
     console.log(document.querySelector('#card'))
+    // console.log(items)
+    // console.log(renderer)
+    // console.log(containerSelector)
     this._renderer = renderer;
     this._container = document.querySelector(containerSelector);
   }
