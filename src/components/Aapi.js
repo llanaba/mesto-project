@@ -5,6 +5,7 @@ export default class Aapi {
     this._headers = options.headers;
   }
 
+
   // checking the received result from the server for an error
   // success: decode the result into JSON format
   // error:   call reject
@@ -15,6 +16,7 @@ export default class Aapi {
     return res.json()
   }
 
+  // METHODS TO DEAL WITH CARDS
   getInitialCards () {
     const url = `${this._baseUrl}/cards`;
     return fetch(url, {
@@ -37,6 +39,35 @@ export default class Aapi {
       })
   }
 
+  deleteCard (cardId) {
+    const url = `${this._baseUrl}/cards/${cardId}`;
+    return fetch(url, {
+      method: 'DELETE',
+      headers: this._headers
+    })
+      .then((res) => {
+        return this._getResponseData(res);
+      });
+  }
+
+  postNewCard ({ 'place-name': cardName, 'place-link': imageLink }) {
+    const url = `${this._baseUrl}/cards`;
+    return fetch(url, {
+      method: 'POST',
+      headers: this._headers,
+      body: JSON.stringify({
+        name: cardName,
+        link: imageLink
+      })
+    })
+      .then((res) => {
+        return this._getResponseData(res);
+      });
+  }
+
+  // METHODS TO DEAL WITH USER
+
+  // fetching user data from the server
   getUser () {
     const url = `${this._baseUrl}/users/me`;
     return fetch(url, {
@@ -61,5 +92,20 @@ export default class Aapi {
       .then((res) => {
         return getResponseData(res);
       });
+  }
+
+  // post updated user avatar to the server
+  updateAvatar (avatarUrl) {
+    const url = `${this._baseUrl}/users/me/avatar`
+    return fetch(url, {
+      method: 'PATCH',
+      headers: this._headers,
+      body: JSON.stringify({
+        avatar: avatarUrl
+      })
+    })
+      .then((res) => {
+        return getResponseData(res);
+      })
   }
 }

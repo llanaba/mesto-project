@@ -1,12 +1,14 @@
-import Card from '../components/Card.js'
-import Section from '../components/Section.js'
-import UserInfo from '../components/UserInfo.js'
-import Api from '../components/Aapi.js'
 import {
   config,
-  userSelectors
+  userSelectors,
+  popupSelectors
 } from '../utils/constants.js'
-
+import Api from '../components/Aapi.js'
+import UserInfo from '../components/UserInfo.js'
+import Section from '../components/Section.js'
+import Card from '../components/Card.js'
+import PopupWithImage from '../components/PopupWithImage.js';
+import PopupWithForm from '../components/PopupWithForm.js';
 import './index.css'
 
 // * * * VARIABLES AND FUNCTIONS * * *
@@ -14,32 +16,24 @@ import './index.css'
 // Функция, ответственная за загрузку страницы
 function loadInitialPage() {
   console.log("I'm inside loadInitialPage")
-  // Теперь данные юзера - это экземпляр класса UserInfo
-  // При создании экземпляра передаем селекторы, нужные для профиля и два метода api
-  // Оба метода привязываем к api через bind, чтобы не потерять контекст
-  const user = new UserInfo(
-    userSelectors,
-    api.getUser.bind(api),
-    api.updateProfileInfo.bind(api))
+
   Promise.all([
     user.getUserInfo(),
     api.getInitialCards()
   ])
     .then((values) => {
       let [userData, cardsData] = values;
-      console.log("I'm about to render user profile on page")
-      // для отображения данных на странице используется renderUserInfo —
-      // этот метод не ходит на сервер, просто отрисовывает данные на странице
-      user.renderUserInfo(userData)
-      console.log("I'm about to make initialCardList")
-      // карточки теперь - экземпляр класса Section, добавляются по тому же принципу, как
-      // в интернет-магазине роботов из тренажера
       const initialCardList = new Section({
         items: cardsData,
         renderer: (item) => {
-          console.log("I'm inside renderer in index.js")
-          const card = new Card(item, '#card');
-          console.log("card inside renderer in loadInitialPage: ")
+          // console.log("I'm inside renderer in index.js")
+          const card = new Card(
+            item,
+            '#card',
+            {
+              deleteCardApi: api.deleteCard.bind(api),
+              likeCardApi: api.likeCard.bind(api)
+            });
           const cardElement = card.generate(userData, api);
           initialCardList.addItem(cardElement);
         }
@@ -54,8 +48,27 @@ function loadInitialPage() {
 // * * * MAIN CODE * * *
 
 const api = new Api(config)
+const user = new UserInfo(
+  userSelectors,
+  {
+    getInfoApi: api.getUser.bind(api),
+    setInforProfileApi: api.updateProfileInfo.bind(api),
+    setInfoAvatarApi: api.updateAvatar.bind(api),
+  }
+);
 // Enabling validation for all forms on the site (отключила на время)
 // enableValidation(validationSelectors);
 
 // Filling the page with existing data
 loadInitialPage();
+console.log("I've just loaded initial page")
+
+const createCardPopup = new PopupWithForm(
+  popupSelectors.createCard,
+  api.postNewCard.bind(api)
+);
+
+createCardPopup.setEventListeners();
+document.querySelector('.profile__button-add').addEventListener('click', (evt) => {
+  createCardPopup.open();
+});

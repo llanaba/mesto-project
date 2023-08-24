@@ -11,3 +11,20 @@ export const userSelectors = {
   'infoSelector': 'p.profile__description',
   'avatarSelector': '.profile__avatar'
 }
+
+export const popupSelectors = {
+  'createCard': '.popup_add-card',
+  'editProfile': '.popup_edit-profile'
+}
+
+export const cardSelectors = {
+  'cardName': '.card__text',
+  'cardImage': '.card__image',
+  'likeCounter': '.card__like-counter',
+  'buttonBin': '.card__button-bin',
+  'buttonLike': '.card__button-like'
+}
+
+export const buttons = {
+  'addCard': document.querySelector('.profile__button-add')
+}
