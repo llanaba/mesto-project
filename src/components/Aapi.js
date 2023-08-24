@@ -37,6 +37,17 @@ export default class Aapi {
       })
   }
 
+  deleteCard (cardId) {
+    const url = `${this._baseUrl}/cards/${cardId}`;
+    return fetch(url, {
+      method: 'DELETE',
+      headers: this._headers
+    })
+      .then((res) => {
+        return this._getResponseData(res);
+      });
+  }
+
   getUser () {
     const url = `${this._baseUrl}/users/me`;
     return fetch(url, {
@@ -48,6 +59,7 @@ export default class Aapi {
       });
   }
 
+  // Пока не проверяла, как работает — нужен popup!
   updateProfileInfo (userName, userDescription) {
     const url = `${config.baseUrl}/users/me`;
     return fetch(url, {
