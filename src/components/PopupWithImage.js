@@ -7,7 +7,7 @@ export default class PopupWithImage extends Popup {
     this._caption = this._element.querySelector('.figure__caption');
 	}
 
-  // open popup
+  // redefines parent 'open' method: adds image and caption to the popup
   open (name, img) {
     this._image.src = img;
     this._image.alt = name;

@@ -3,7 +3,7 @@ export default class Card {
   constructor(
     {_id, name, link, owner, likes},
     cardTemplateSelector,
-    { deleteCardApi, likeCardApi }
+    { deleteCardApi, likeCardApi, openViewImagePopup }
   ) {
     this._selector = cardTemplateSelector
 
@@ -15,6 +15,8 @@ export default class Card {
 
     this._deleteCard = deleteCardApi;
     this._likeCard = likeCardApi;
+    this._viewImage = openViewImagePopup;
+    // this._appendCard = appendCard;
   }
 
   // пользуясь селектором template-элемента, создает пустой элемент карточки
@@ -60,14 +62,15 @@ export default class Card {
       })
   }
 
-  // Пока здесь стоит заглушка, проверяющая, работает ли установка слушателей
   _setEventListeners() {
     this._buttonLikeElement.addEventListener('click', (evt) => {
         this._handleLikeClick(evt, this._cardId)
-      }
-    )
+      })
     this._buttonBinElement.addEventListener('click', (evt) => {
       this._handleDeleteClick();
+    })
+    this._element.querySelector(cardSelectors.cardImage).addEventListener('click', (evt) => {
+      this._viewImage(this._name, this._link);
     })
   }
   // возвращает полностью готовый элемент карточки

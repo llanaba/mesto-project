@@ -14,7 +14,8 @@ export const userSelectors = {
 
 export const popupSelectors = {
   'createCard': '.popup_add-card',
-  'editProfile': '.popup_edit-profile'
+  'editProfile': '.popup_edit-profile',
+  'editAvatar': '.popup_edit-avatar',
 }
 
 export const cardSelectors = {
@@ -25,6 +26,16 @@ export const cardSelectors = {
   'buttonLike': '.card__button-like'
 }
 
+export const validationSelectors = {
+  inputSelector: '.form__input-text',
+  submitButtonSelector: '.popup__button-save',
+  inactiveButtonClass: 'popup__button-save_disabled',
+  inputErrorClass: 'form__input-text_error',
+  errorClass: 'form__input-error_active'
+}
+
 export const buttons = {
-  'addCard': document.querySelector('.profile__button-add')
+  'addCard': document.querySelector('.profile__button-add'),
+  'editProfile': document.querySelector('.profile__button-edit'),
+  'changeAvatar': document.querySelector('.profile__avatar-overlay'),
 }
