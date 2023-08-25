@@ -19,8 +19,6 @@ import './index.css'
 
 // Функция, ответственная за загрузку страницы
 function loadInitialPage() {
-  console.log("I'm inside loadInitialPage")
-
   Promise.all([
     user.getUserInfo(),
     api.getInitialCards()
@@ -58,22 +56,20 @@ const user = new UserInfo(
   userSelectors,
   {
     getInfoApi: api.getUser.bind(api),
-    setInforProfileApi: api.updateProfileInfo.bind(api),
+    setInfoProfileApi: api.updateProfileInfo.bind(api),
     setInfoAvatarApi: api.updateAvatar.bind(api),
   }
 );
 
+// Enabling validation for all forms on the site
 // relation to the form validation class (FormValidator)
 function validate(form) {
   const validator = new FormValidator(validationSelectors, form);
   validator.setEventListeners();
 }
-// Enabling validation for all forms on the site (отключила на время)
-// enableValidation(validationSelectors);
 
 // Filling the page with existing data
 loadInitialPage();
-console.log("I've just loaded initial page")
 
 // * * * POPUPS * * *
 
@@ -81,9 +77,11 @@ console.log("I've just loaded initial page")
 
 const editProfilePopup = new PopupWithForm (
   popupSelectors.editProfile,
-  api.updateProfileInfo.bind(api),
-  validate
-  );
+  validate,
+  {renderer: ({'user-name': name, 'user-description': about}) => {
+    user.setUserInfo({'name': name, 'about': about})
+  }}
+);
 editProfilePopup.setEventListeners();
 buttons.editProfile.addEventListener('click', (evt) => {
   editProfilePopup.open();
@@ -91,8 +89,11 @@ buttons.editProfile.addEventListener('click', (evt) => {
 
 const changeAvatarPopup = new PopupWithForm (
   popupSelectors.editAvatar,
-  api.updateAvatar.bind(api),
-  validate);
+  validate,
+  {renderer: ({'avatar-link': avatar}) => {
+    user.setUserInfo({'avatar': avatar})
+  }}
+);
 changeAvatarPopup.setEventListeners();
 buttons.changeAvatar.addEventListener('click', (evt) => {
     changeAvatarPopup.open();
@@ -102,8 +103,14 @@ buttons.changeAvatar.addEventListener('click', (evt) => {
 
 const createCardPopup = new PopupWithForm(
   popupSelectors.createCard,
-  api.postNewCard.bind(api),
-  validate
+  validate,
+  {renderer: (card) => {
+    console.log(card)
+    api.postNewCard(card)
+      .then((res) => {
+        console.log(res)
+      })
+  }}
 );
 createCardPopup.setEventListeners();
 buttons.addCard.addEventListener('click', (evt) => {

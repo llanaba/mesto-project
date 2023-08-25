@@ -1,6 +1,5 @@
 export default class Api {
   constructor (options) {
-    console.log("I'm inside class Api constructor")
     this._baseUrl = options.baseUrl;
     this._headers = options.headers;
   }
@@ -96,6 +95,8 @@ export default class Api {
 
   // post updated user avatar to the server
   updateAvatar (avatarUrl) {
+    console.log("I'm in updateAvatar api")
+    console.log(avatarUrl)
     const url = `${this._baseUrl}/users/me/avatar`
     return fetch(url, {
       method: 'PATCH',

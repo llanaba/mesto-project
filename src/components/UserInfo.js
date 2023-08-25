@@ -40,19 +40,23 @@ export default class UserInfo {
 
   // processes data received from user and posts it to server
   setUserInfo ({ name, about, avatar }) {
-    if (this._name !== name || this._about !== about) {
-      this._setInfoProfileApi(this)
-        .then((userInfo) => {
-          this._processUserInfo(userInfo);
-          this._renderUserInfo();
-        });
+    if (name || about) {
+      if (this._name !== name || this._about !== about) {
+        this._setInfoProfileApi(name, about)
+          .then((userInfo) => {
+            this._processUserInfo(userInfo);
+            this._renderUserInfo();
+          });
+      }
     }
-    if (this._avatar !== avatar) {
-      this._setInfoAvatarApi(this)
-        .then((userInfo) => {
-          this._processUserInfo(userInfo);
-          this._renderUserInfo();
-        });
+    if (avatar) {
+      if (this._avatar !== avatar) {
+        this._setInfoAvatarApi(avatar)
+          .then((userInfo) => {
+            this._processUserInfo(userInfo);
+            this._renderUserInfo();
+          });
+      }
     }
   }
 }
