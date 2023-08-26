@@ -1,7 +1,7 @@
 export default class Api {
   constructor (options) {
-    this._baseUrl = options.baseUrl;
-    this._headers = options.headers;
+    this._baseUrl = options.baseUrl; // link to the server
+    this._headers = options.headers; // fundamental configurations for transmitting messages to the server
   }
 
 
@@ -16,6 +16,7 @@ export default class Api {
   }
 
   // METHODS TO DEAL WITH CARDS
+  // Getting photo cards from the server
   getInitialCards () {
     const url = `${this._baseUrl}/cards`;
     return fetch(url, {
@@ -27,6 +28,7 @@ export default class Api {
       });
   }
 
+  // Liking and unliking actions being sent to the server
   likeCard (cardId, method) {
     const url = `${this._baseUrl}/cards/likes/${cardId}`
     return fetch(url, {
@@ -38,6 +40,7 @@ export default class Api {
       })
   }
 
+  // deleting a photo card
   deleteCard (cardId) {
     const url = `${this._baseUrl}/cards/${cardId}`;
     return fetch(url, {
@@ -49,6 +52,7 @@ export default class Api {
       });
   }
 
+  // sending a new photo card
   postNewCard ({ 'place-name': cardName, 'place-link': imageLink }) {
     const url = `${this._baseUrl}/cards`;
     return fetch(url, {
@@ -65,7 +69,6 @@ export default class Api {
   }
 
   // METHODS TO DEAL WITH USER
-
   // fetching user data from the server
   getUser () {
     const url = `${this._baseUrl}/users/me`;
@@ -78,6 +81,7 @@ export default class Api {
       });
   }
 
+  // updating user information
   updateProfileInfo (userName, userDescription) {
     const url = `${this._baseUrl}/users/me`;
     return fetch(url, {
@@ -95,8 +99,6 @@ export default class Api {
 
   // post updated user avatar to the server
   updateAvatar (avatarUrl) {
-    console.log("I'm in updateAvatar api")
-    console.log(avatarUrl)
     const url = `${this._baseUrl}/users/me/avatar`
     return fetch(url, {
       method: 'PATCH',
