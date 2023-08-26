@@ -1,27 +1,25 @@
 export default class Section {
   constructor ({ items, renderer }, containerSelector) {
-    this._renderedItems = items;
-    // console.log("I'm in SECTION")
-    this._renderer = renderer;
-    this._container = document.querySelector(containerSelector);
+    this._renderedItems = items; // array with photo card information
+    this._renderer = renderer; // function for creating photo cards
+    this._container = document.querySelector(containerSelector); // the element in which are placed
   }
 
   // adding markup to a container
   addItem (element) {
-    this._container.append(element);
+    this._container.prepend(element);
   }
 
+  // clearing the container of all photo cards
   clear() {
-    this._container.innerHTML = '';
+    [...this._container.querySelectorAll('.card')].forEach((card) => card.remove());
   }
 
   // creating element markup
   renderItems () {
-    console.log("I'm in renderItems")
-    // this.clear();
+    this.clear();
 
     this._renderedItems.forEach(item => {
-      // console.log(document.querySelector('#card'))
       this._renderer(item);
     });
   }
