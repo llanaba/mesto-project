@@ -11,48 +11,15 @@ import Section from '../components/Section.js'
 import Card from '../components/Card.js'
 import PopupWithImage from '../components/PopupWithImage.js';
 import PopupWithForm from '../components/PopupWithForm.js';
+import PopupWithConfirmation from '../components/PopupWithConfirmation.js';
 import FormValidator from '../components/FormValidator.js';
 import './index.css'
 
 // * * * VARIABLES AND FUNCTIONS * * *
 
-
-// Функция, ответственная за загрузку страницы
-function loadInitialPage() {
-  Promise.all([
-    user.getUserInfo(),
-    api.getInitialCards()
-  ])
-    .then((values) => {
-      let [userData, cardsData] = values;
-      const initialCardList = new Section({
-        items: cardsData,
-        renderer: (item) => {
-          // console.log("I'm inside renderer in index.js")
-          const card = new Card(
-            item,
-            '#card',
-            {
-              deleteCardApi: api.deleteCard.bind(api),
-              likeCardApi: api.likeCard.bind(api),
-              openViewImagePopup: (name, link) => {viewImagePopup.open(name, link)}
-              // appendCard: initialCardList.addItem.bind(initialCardList)
-            });
-          const cardElement = card.generate(userData, api);
-          initialCardList.addItem(cardElement);
-        }
-      }, '.cards__list');
-      initialCardList.renderItems();
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-}
-
-// * * * MAIN CODE * * *
-
-const api = new Api(config)
-const user = new UserInfo(
+let initialCardList; // storage for photo cards
+const api = new Api(config); // a class for working with the server
+const user = new UserInfo ( // class with user information
   userSelectors,
   {
     getInfoApi: api.getUser.bind(api),
@@ -61,12 +28,94 @@ const user = new UserInfo(
   }
 );
 
+// creating a profile editing setup
+const editProfilePopup = new PopupWithForm ( 
+  popupSelectors.editProfile,
+  validate,
+  { submit: user.setUserInfo.bind(user) }
+);
+
+// creating a popup for changing the user's avatar
+const changeAvatarPopup = new PopupWithForm ( 
+  popupSelectors.editAvatar,
+  validate,
+  {
+    submit: user.setUserInfo.bind(user)
+  }
+);
+
+// creating a pop-up for creating a photo card
+const createCardPopup = new PopupWithForm ( 
+  popupSelectors.createCard,
+  validate,
+  {
+    submit: (subInfoCard) => {
+      return api.postNewCard(subInfoCard)
+        .then((cardInfo) => {
+          renderPhotoCard (cardInfo);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }
+);
+
+// creating a pop-up for opening an image of a photo card
+const viewImagePopup = new PopupWithImage(popupSelectors.viewImage); 
+
+// confirmation of photo card deletion
+const deleteCardPopup = new PopupWithConfirmation ( 
+  popupSelectors.deleteCard,
+  {
+    deleteCardApi: api.deleteCard.bind(api)
+  }
+);
+
+// creating a photo card and placing it in storage
+function renderPhotoCard (photoCardItem) {
+  const card = new Card (
+    photoCardItem,
+    '#card',
+    {
+      deleteCard: (card) => {
+        deleteCardPopup.callBackDeleteItem(card);
+        deleteCardPopup.open();        
+      },
+      likeCardApi: api.likeCard.bind(api),
+      openViewImagePopup: viewImagePopup.open.bind(viewImagePopup)
+    }
+  );
+  const cardElement = card.generate(user);
+  initialCardList.addItem(cardElement);
+}
+
+// uploading user information and drawing photo cards from the server
+function loadInitialPage() {
+  Promise.all([
+    user.getUserInfo(),
+    api.getInitialCards()
+  ])
+    .then(([ userData, cardsData ]) => {
+      initialCardList = new Section ({
+        items: cardsData,
+        renderer: renderPhotoCard
+      }, '.cards__list');
+      initialCardList.renderItems();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
 // Enabling validation for all forms on the site
 // relation to the form validation class (FormValidator)
 function validate(form) {
   const validator = new FormValidator(validationSelectors, form);
-  validator.setEventListeners();
+  validator.setEventListeners(); // enabling event handlers
 }
+
+// * * * MAIN CODE * * *
 
 // Filling the page with existing data
 loadInitialPage();
@@ -74,50 +123,24 @@ loadInitialPage();
 // * * * POPUPS * * *
 
 // Profile Editing popup (info and avatar)
-
-const editProfilePopup = new PopupWithForm (
-  popupSelectors.editProfile,
-  validate,
-  {renderer: ({'user-name': name, 'user-description': about}) => {
-    user.setUserInfo({'name': name, 'about': about})
-  }}
-);
-editProfilePopup.setEventListeners();
+editProfilePopup.setEventListeners(); // enabling event handlers
 buttons.editProfile.addEventListener('click', (evt) => {
-  editProfilePopup.open();
+  editProfilePopup.open(); // opening of the popup
 });
 
-const changeAvatarPopup = new PopupWithForm (
-  popupSelectors.editAvatar,
-  validate,
-  {renderer: ({'avatar-link': avatar}) => {
-    user.setUserInfo({'avatar': avatar})
-  }}
-);
-changeAvatarPopup.setEventListeners();
+changeAvatarPopup.setEventListeners(); // enabling event handlers
 buttons.changeAvatar.addEventListener('click', (evt) => {
-    changeAvatarPopup.open();
-  });
+  changeAvatarPopup.open(); // opening of the popup
+});
 
 // Creating New Card popup
-
-const createCardPopup = new PopupWithForm(
-  popupSelectors.createCard,
-  validate,
-  {renderer: (card) => {
-    console.log(card)
-    api.postNewCard(card)
-      .then((res) => {
-        console.log(res)
-      })
-  }}
-);
-createCardPopup.setEventListeners();
+createCardPopup.setEventListeners(); // enabling event handlers
 buttons.addCard.addEventListener('click', (evt) => {
-  createCardPopup.open();
+  createCardPopup.open(); // opening of the popup
 });
 
 // Viewing Image popup
+viewImagePopup.setEventListeners(); // enabling event handlers
 
-const viewImagePopup = new PopupWithImage('.popup_view-image');
-viewImagePopup.setEventListeners();
+// delete Card Popup
+deleteCardPopup.setEventListeners(); // enabling event handlers
