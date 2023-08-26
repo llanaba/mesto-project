@@ -1,13 +1,11 @@
 import Popup from './Popup.js';
 
 export default class PopupWithForm extends Popup {
-  constructor(selector, validate = '', {renderer}) {
+  constructor(selector, validate, { submit }) {
     super(selector);
-    this._renderer = renderer
-    this._form = this._element.querySelector('.form');
-    if (typeof validate === 'function') {
-      validate(this._form);
-    }
+    this._submit = submit; // the submit function of the form
+    this._form = this._element.querySelector('.form'); // form element in the popup
+    validate(this._form); // enabling validation of form fields
 	}
 
   // getting information from input fields
@@ -24,11 +22,18 @@ export default class PopupWithForm extends Popup {
     super.setEventListeners();
     this._form.addEventListener('submit', (evt) => {
       evt.preventDefault();
-      this._renderer(this._getInputValues())
-      this._form.reset();
-      this.close();
+      const rezSubmit = this._submit(this._getInputValues());
+      if (rezSubmit) {
+        rezSubmit
+          .then((rez) => {
+            this._form.reset();
+            this.close();
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
-    );
+    });
   }
 
   // close popup
