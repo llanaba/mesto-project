@@ -1,3 +1,4 @@
+// basic message for the server
 export const config = {
   baseUrl: 'https://nomoreparties.co/v1/plus-cohort-27',
   headers: {
@@ -6,26 +7,32 @@ export const config = {
   }
 }
 
+// user profile selectors
 export const userSelectors = {
-  'nameSelector': 'h1.profile__name',
-  'infoSelector': 'p.profile__description',
-  'avatarSelector': '.profile__avatar'
+  nameSelector: 'h1.profile__name',
+  infoSelector: 'p.profile__description',
+  avatarSelector: '.profile__avatar'
 }
 
+// popup selectors
 export const popupSelectors = {
-  'createCard': '.popup_add-card',
-  'editProfile': '.popup_edit-profile',
-  'editAvatar': '.popup_edit-avatar',
+  createCard: '.popup_add-card',
+  editProfile: '.popup_edit-profile',
+  editAvatar: '.popup_edit-avatar',
+  viewImage: '.popup_view-image',
+  deleteCard: '.popup_confirm-delete'
 }
 
+// photo card selectors
 export const cardSelectors = {
-  'cardName': '.card__text',
-  'cardImage': '.card__image',
-  'likeCounter': '.card__like-counter',
-  'buttonBin': '.card__button-bin',
-  'buttonLike': '.card__button-like'
+  cardName: '.card__text',
+  cardImage: '.card__image',
+  likeCounter: '.card__like-counter',
+  buttonBin: '.card__button-bin',
+  buttonLike: '.card__button-like'
 }
 
+// selectors for form validation
 export const validationSelectors = {
   inputSelector: '.form__input-text',
   submitButtonSelector: '.popup__button-save',
@@ -34,8 +41,9 @@ export const validationSelectors = {
   errorClass: 'form__input-error_active'
 }
 
+// button selectors
 export const buttons = {
-  'addCard': document.querySelector('.profile__button-add'),
-  'editProfile': document.querySelector('.profile__button-edit'),
-  'changeAvatar': document.querySelector('.profile__avatar-overlay'),
+  addCard: document.querySelector('.profile__button-add'),
+  editProfile: document.querySelector('.profile__button-edit'),
+  changeAvatar: document.querySelector('.profile__avatar-overlay'),
 }
