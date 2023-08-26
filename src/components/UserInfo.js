@@ -3,32 +3,34 @@ export default class UserInfo {
     { nameSelector, infoSelector, avatarSelector },
     { getInfoApi, setInfoProfileApi, setInfoAvatarApi }
   ) {
-    this._userName = document.querySelector(nameSelector);
-    this._userAbout = document.querySelector(infoSelector);
-    this._userAvatar = document.querySelector(avatarSelector);
+    this._userName = document.querySelector(nameSelector); // user name element
+    this._userAbout = document.querySelector(infoSelector); // user description element
+    this._userAvatar = document.querySelector(avatarSelector); // the user's avatar element
 
-    this._getInfoApi = getInfoApi;
-    this._setInfoProfileApi = setInfoProfileApi;
-    this._setInfoAvatarApi = setInfoAvatarApi;
+    this._getInfoApi = getInfoApi; // the function of obtaining user information
+    this._setInfoProfileApi = setInfoProfileApi; // the function of sending user information
+    this._setInfoAvatarApi = setInfoAvatarApi; // the function of sending the user's avatar
   }
 
   // fetches user's info from server, processes, renders and returns it
   getUserInfo () {
-    console.log("I'm inside getUserInfo")
     const info = this._getInfoApi();
     info.then((userInfo) => {
       this._processUserInfo(userInfo);
       this._renderUserInfo();
     })
-    return info
+    .catch((err) => {
+      console.log(err);
+    });
+    return info;
   }
 
   // unpacks user's info received from server and sets user's attributes
-  _processUserInfo ({ name, about, avatar, id }) {
+  _processUserInfo ({ name, about, avatar, _id }) {
     this._name = name;
     this._about = about;
     this._avatar = avatar;
-    this._id = id;
+    this._id = _id;
   }
 
   // renders user's info on page
@@ -39,24 +41,26 @@ export default class UserInfo {
   }
 
   // processes data received from user and posts it to server
-  setUserInfo ({ name, about, avatar }) {
-    if (name || about) {
-      if (this._name !== name || this._about !== about) {
-        this._setInfoProfileApi(name, about)
-          .then((userInfo) => {
-            this._processUserInfo(userInfo);
-            this._renderUserInfo();
-          });
-      }
+  setUserInfo ({ 'user-name': name, 'user-description': about, 'avatar-link': avatar }) {
+    if ((name && this._name !== name) || (about && this._about !== about)) {
+      return this._setInfoProfileApi(name, about)
+        .then((userInfo) => {
+          this._processUserInfo(userInfo);
+          this._renderUserInfo();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
-    if (avatar) {
-      if (this._avatar !== avatar) {
-        this._setInfoAvatarApi(avatar)
-          .then((userInfo) => {
-            this._processUserInfo(userInfo);
-            this._renderUserInfo();
-          });
-      }
+    if (avatar && this._avatar !== avatar) {
+      return this._setInfoAvatarApi(avatar)
+        .then((userInfo) => {
+          this._processUserInfo(userInfo);
+          this._renderUserInfo();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   }
 }
