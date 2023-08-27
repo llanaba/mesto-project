@@ -1,10 +1,11 @@
 export default class FormValidator {
   constructor ({ inputSelector, submitButtonSelector, inactiveButtonClass, inputErrorClass, errorClass }, form) {
-    this._inputList = form.querySelectorAll(inputSelector);
-    this._submitButton = form.querySelector(submitButtonSelector);
-    this._inactiveButtonClass = inactiveButtonClass;
-    this._inputErrorClass = inputErrorClass;
-    this._errorClass = errorClass;
+    this._inputList = [...form.querySelectorAll(inputSelector)]; // array of input form elements
+    this._submitButton = form.querySelector(submitButtonSelector); // submit button element
+    this._inactiveButtonClass = inactiveButtonClass; // the class of the active submit button
+    this._inputErrorClass = inputErrorClass; // invalid input field class
+    this._errorClass = errorClass; // comment class for invalid input field
+    this._form = form; // form element
   }
 
   // checking all inputs for validity
@@ -27,7 +28,7 @@ export default class FormValidator {
 
   // output of the input error message
   _showInputError (inputElement, errorMessage) {
-    const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
+    const errorElement = this._form.querySelector(`.${inputElement.id}-error`);
     inputElement.classList.add(this._inputErrorClass);
     errorElement.textContent = errorMessage;
     errorElement.classList.add(this._errorClass);
@@ -35,7 +36,7 @@ export default class FormValidator {
 
   // hiding the input error message
   _hideInputError (inputElement) {
-    const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
+    const errorElement = this._form.querySelector(`.${inputElement.id}-error`);
     inputElement.classList.remove(this._inputErrorClass);
     errorElement.classList.remove(this._errorClass);
     errorElement.textContent = '';

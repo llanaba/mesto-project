@@ -1,70 +1,66 @@
 export default class UserInfo {
   constructor (
-    {nameSelector, infoSelector, avatarSelector},
-    getInfoApi,
-    sefInfoApi
+    { nameSelector, infoSelector, avatarSelector },
+    { getInfoApi, setInfoProfileApi, setInfoAvatarApi }
   ) {
-    this._userName = document.querySelector(nameSelector);
-    this._userAbout = document.querySelector(infoSelector);
-    this._userAvatar = document.querySelector(avatarSelector);
+    this._userName = document.querySelector(nameSelector); // user name element
+    this._userAbout = document.querySelector(infoSelector); // user description element
+    this._userAvatar = document.querySelector(avatarSelector); // the user's avatar element
 
-    this._getInfoApi = getInfoApi
+    this._getInfoApi = getInfoApi; // the function of obtaining user information
+    this._setInfoProfileApi = setInfoProfileApi; // the function of sending user information
+    this._setInfoAvatarApi = setInfoAvatarApi; // the function of sending the user's avatar
   }
 
-  // getting user information from the server and returning this information
+  // fetches user's info from server, processes, renders and returns it
   getUserInfo () {
-    console.log("I'm inside getUserInfo")
-    this.userInfo = this._getInfoApi()
-    return this.userInfo
+    const info = this._getInfoApi();
+    info.then((userInfo) => {
+      this._processUserInfo(userInfo);
+      this._renderUserInfo();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+    return info;
   }
 
-  renderUserInfo ({ name, about, avatar }) {
-    this._userName.textContent = name;
-    this._userAbout.textContent = about;
-    this._userAvatar.src = avatar;
+  // unpacks user's info received from server and sets user's attributes
+  _processUserInfo ({ name, about, avatar, _id }) {
+    this._name = name;
+    this._about = about;
+    this._avatar = avatar;
+    this._id = _id;
   }
 
-  // so far - just renders the info on the page, doesn't send anything to the server
-  setUserInfo ({ name, about, avatar }) {
-    this.renderUserInfo({ name, about, avatar })
-    // this._userName.textContent = name;
-    // this._userAbout.textContent = about;
-    // this._userAvatar.src = avatar;
+  // renders user's info on page
+  _renderUserInfo () {
+    this._userName.textContent = this._name;
+    this._userAbout.textContent = this._about;
+    this._userAvatar.src = this._avatar;
+  }
+
+  // processes data received from user and posts it to server
+  setUserInfo ({ 'user-name': name, 'user-description': about, 'avatar-link': avatar }) {
+    if ((name && this._name !== name) || (about && this._about !== about)) {
+      return this._setInfoProfileApi(name, about)
+        .then((userInfo) => {
+          this._processUserInfo(userInfo);
+          this._renderUserInfo();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    if (avatar && this._avatar !== avatar) {
+      return this._setInfoAvatarApi(avatar)
+        .then((userInfo) => {
+          this._processUserInfo(userInfo);
+          this._renderUserInfo();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }
 }
-
-// VERSION 1
-
-// class UserInfo {
-//   constructor ({ name = '', about = '', avatar = '', _id = '', cohort = '' }, { setInfoServer, getInfoServer }) {
-//     this._name = name;
-//     this._about = about;
-//     this._avatar = avatar;
-//     this._id = _id;
-//     this._cohort = cohort;
-
-//     this._setInfoServer = setInfoServer;
-//     this._getInfoServer = getInfoServer;
-//   }
-
-//   // getting user information from the server and returning this information
-//   getUserInfo () {
-//     const userInfo = this._getInfoServer();
-//     if (userInfo.ok) {
-//       const { name, about, avatar, _id, cohort } = userInfo;
-//       this._name = name;
-//       this._about = about;
-//       this._avatar = avatar;
-//       this._id = _id;
-//       this._cohort = cohort;
-//       return this;
-//     } else {
-//       return false;
-//     }
-//   }
-
-//   // sending user information to the server
-//   setUserInfo () {
-//     this._setInfoServer(this);
-//   }
-// }
