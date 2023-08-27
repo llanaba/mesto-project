@@ -29,25 +29,25 @@ const user = new UserInfo ( // class with user information
 );
 
 // creating a profile editing setup
-const editProfilePopup = new PopupWithForm ( 
+const editProfilePopup = new PopupWithForm (
   popupSelectors.editProfile,
-  validate,
+  // validate,
   { submit: user.setUserInfo.bind(user) }
 );
 
 // creating a popup for changing the user's avatar
-const changeAvatarPopup = new PopupWithForm ( 
+const changeAvatarPopup = new PopupWithForm (
   popupSelectors.editAvatar,
-  validate,
+  // validate,
   {
     submit: user.setUserInfo.bind(user)
   }
 );
 
 // creating a pop-up for creating a photo card
-const createCardPopup = new PopupWithForm ( 
+const createCardPopup = new PopupWithForm (
   popupSelectors.createCard,
-  validate,
+  // validate,
   {
     submit: (subInfoCard) => {
       return api.postNewCard(subInfoCard)
@@ -62,10 +62,10 @@ const createCardPopup = new PopupWithForm (
 );
 
 // creating a pop-up for opening an image of a photo card
-const viewImagePopup = new PopupWithImage(popupSelectors.viewImage); 
+const viewImagePopup = new PopupWithImage(popupSelectors.viewImage);
 
 // confirmation of photo card deletion
-const deleteCardPopup = new PopupWithConfirmation ( 
+const deleteCardPopup = new PopupWithConfirmation (
   popupSelectors.deleteCard,
   {
     deleteCardApi: api.deleteCard.bind(api)
@@ -80,7 +80,7 @@ function renderPhotoCard (photoCardItem) {
     {
       deleteCard: (card) => {
         deleteCardPopup.callBackDeleteItem(card);
-        deleteCardPopup.open();        
+        deleteCardPopup.open();
       },
       likeCardApi: api.likeCard.bind(api),
       openViewImagePopup: viewImagePopup.open.bind(viewImagePopup)
@@ -110,10 +110,26 @@ function loadInitialPage() {
 
 // Enabling validation for all forms on the site
 // relation to the form validation class (FormValidator)
-function validate(form) {
-  const validator = new FormValidator(validationSelectors, form);
-  validator.setEventListeners(); // enabling event handlers
+// function validate(form) {
+//   const validator = new FormValidator(validationSelectors, form);
+//   validator.setEventListeners(); // enabling event handlers
+// }
+
+
+// Enabling validation for all forms on the site
+const formValidators = {}
+
+const enableValidation = (validationSelectors) => {
+  const formList = Array.from(document.querySelectorAll(validationSelectors.formSelector))
+  formList.forEach((formElement) => {
+    const validator = new FormValidator(validationSelectors, formElement)
+    const formName = formElement.getAttribute('name')
+    formValidators[formName] = validator;
+    validator.enableValidation();
+  })
 }
+
+enableValidation(validationSelectors);
 
 // * * * MAIN CODE * * *
 
@@ -125,6 +141,7 @@ loadInitialPage();
 // Profile Editing popup (info and avatar)
 editProfilePopup.setEventListeners(); // enabling event handlers
 buttons.editProfile.addEventListener('click', (evt) => {
+  formValidators['edit-profile-form'].resetValidation();
   editProfilePopup.open(); // opening of the popup
 });
 
@@ -136,6 +153,7 @@ buttons.changeAvatar.addEventListener('click', (evt) => {
 // Creating New Card popup
 createCardPopup.setEventListeners(); // enabling event handlers
 buttons.addCard.addEventListener('click', (evt) => {
+  console.log(createCardPopup)
   createCardPopup.open(); // opening of the popup
 });
 

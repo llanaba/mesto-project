@@ -34,6 +34,7 @@ export const cardSelectors = {
 
 // selectors for form validation
 export const validationSelectors = {
+  formSelector: '.form',
   inputSelector: '.form__input-text',
   submitButtonSelector: '.popup__button-save',
   inactiveButtonClass: 'popup__button-save_disabled',
