@@ -15,47 +15,33 @@ export default class Api {
     return res.json()
   }
 
+  _request(endpoint, options) {
+    const url = this._baseUrl + endpoint
+    console.log(this._baseUrl + endpoint)
+    return fetch(url, options).then(this._getResponseData)
+  }
+
   // METHODS TO DEAL WITH CARDS
   // Getting photo cards from the server
   getInitialCards () {
-    const url = `${this._baseUrl}/cards`;
-    return fetch(url, {
-      method: 'GET',
-      headers: this._headers
-    })
-      .then((res) => {
-        return this._getResponseData(res);
-      });
+    return this._request('cards', {method: 'GET',headers: this._headers})
   }
 
   // Liking and unliking actions being sent to the server
   likeCard (cardId, method) {
-    const url = `${this._baseUrl}/cards/likes/${cardId}`
-    return fetch(url, {
-      method: method,
-      headers: this._headers
-    })
-      .then((res) => {
-        return this._getResponseData(res);
-      })
+    const endpoint = `cards/likes/${cardId}`
+    return this._request(endpoint, {method: method, headers: this._headers})
   }
 
   // deleting a photo card
   deleteCard (cardId) {
-    const url = `${this._baseUrl}/cards/${cardId}`;
-    return fetch(url, {
-      method: 'DELETE',
-      headers: this._headers
-    })
-      .then((res) => {
-        return this._getResponseData(res);
-      });
+    const endpoint = `cards/${cardId}`;
+    return this._request(endpoint, {method: 'DELETE', headers: this._headers})
   }
 
   // sending a new photo card
   postNewCard ({ 'place-name': cardName, 'place-link': imageLink }) {
-    const url = `${this._baseUrl}/cards`;
-    return fetch(url, {
+    return this._request('cards', {
       method: 'POST',
       headers: this._headers,
       body: JSON.stringify({
@@ -63,28 +49,20 @@ export default class Api {
         link: imageLink
       })
     })
-      .then((res) => {
-        return this._getResponseData(res);
-      });
   }
 
   // METHODS TO DEAL WITH USER
   // fetching user data from the server
   getUser () {
-    const url = `${this._baseUrl}/users/me`;
-    return fetch(url, {
+    return this._request('users/me', {
       method: 'GET',
       headers: this._headers
     })
-      .then((res) => {
-        return this._getResponseData(res);
-      });
   }
 
   // updating user information
   updateProfileInfo (userName, userDescription) {
-    const url = `${this._baseUrl}/users/me`;
-    return fetch(url, {
+    return this._request('users/me', {
       method: 'PATCH',
       headers: this._headers,
       body: JSON.stringify({
@@ -92,23 +70,16 @@ export default class Api {
         about: userDescription
       })
     })
-      .then((res) => {
-        return this._getResponseData(res);
-      });
   }
 
-  // post updated user avatar to the server
+  // posting updated user avatar to the server
   updateAvatar (avatarUrl) {
-    const url = `${this._baseUrl}/users/me/avatar`
-    return fetch(url, {
+    return this._request('users/me/avatar', {
       method: 'PATCH',
       headers: this._headers,
       body: JSON.stringify({
         avatar: avatarUrl
       })
     })
-      .then((res) => {
-        return this._getResponseData(res);
-      })
   }
 }
