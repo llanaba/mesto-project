@@ -63,12 +63,20 @@ export default class Card {
       this._viewImage(this._name, this._link);
     });
   }
-  
-  // returns a fully finished card element
-  generate({ _id: userId }) {
-    if (this._owner._id === userId) this._userAuthor = true;
-    if (this._likes.some((like) => like === userId)) this._userLike = true;
 
+  _userLikesCard (userId) {
+    if (this._likes) {
+      const userLikes = this._likes.some(function(fan) {
+        return fan._id === userId
+      });
+      return userLikes
+    }
+    return false
+  }
+  // returns a fully finished card element
+  generate({ userId }) {
+    if (this._owner._id === userId) this._userAuthor = true;
+    if (this._likes.some((like) => like._id === userId)) this._userLike = true;
     this._element = this._getElement();
 
     // we draw something that does not depend on the user

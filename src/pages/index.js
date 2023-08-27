@@ -18,27 +18,43 @@ import './index.css'
 // * * * VARIABLES AND FUNCTIONS * * *
 
 let initialCardList; // storage for photo cards
+let user; // storage for user data
 const api = new Api(config); // a class for working with the server
-const user = new UserInfo ( // class with user information
-  userSelectors,
-  {
-    getInfoApi: api.getUser.bind(api),
-    setInfoProfileApi: api.updateProfileInfo.bind(api),
-    setInfoAvatarApi: api.updateAvatar.bind(api),
-  }
-);
 
 // creating a profile editing popup
 const editProfilePopup = new PopupWithForm (
   popupSelectors.editProfile,
-  { handleSubmit: user.setUserInfo.bind(user) }
+  {
+    handleSubmit: (data) => {
+    editProfilePopup.renderLoading(true);
+    return api.updateProfileInfo(data['user-name'], data['user-description'])
+      .then((updatedData) => {
+        user.setUserInfo(updatedData);
+        editProfilePopup.renderLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
+  }
 );
 
 // creating a popup for changing the user's avatar
 const changeAvatarPopup = new PopupWithForm (
   popupSelectors.editAvatar,
   {
-    handleSubmit: user.setUserInfo.bind(user)
+    handleSubmit: (data) => {
+      changeAvatarPopup.renderLoading(true);
+      console.log(data)
+      return api.updateAvatar(data['avatar-link'])
+        .then((updatedData) => {
+          user.setUserInfo(updatedData);
+          changeAvatarPopup.renderLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }
 );
 
@@ -85,17 +101,22 @@ function renderPhotoCard (photoCardItem) {
       openViewImagePopup: viewImagePopup.open.bind(viewImagePopup)
     }
   );
-  const cardElement = card.generate(user);
+  const cardElement = card.generate(user.getUserInfo());
   initialCardList.addItem(cardElement);
 }
 
 // uploading user information and drawing photo cards from the server
 function loadInitialPage() {
   Promise.all([
-    user.getUserInfo(),
+    api.getUser(),
     api.getInitialCards()
   ])
     .then(([ userData, cardsData ]) => {
+      user = new UserInfo (
+        userSelectors,
+        userData._id,
+      );
+      user.setUserInfo(userData);
       initialCardList = new Section ({
         items: cardsData,
         renderer: renderPhotoCard
@@ -124,7 +145,6 @@ const enableValidation = (validationSelectors) => {
 
 enableValidation(validationSelectors);
 
-
 // Filling the page with existing data
 loadInitialPage();
 
@@ -134,6 +154,10 @@ loadInitialPage();
 editProfilePopup.setEventListeners(); // enabling event handlers
 buttons.editProfile.addEventListener('click', (evt) => {
   formValidators['edit-profile-form'].resetValidation();
+  const userData = user.getUserInfo();
+  editProfilePopup.setInputValues(
+    { 'user-name': userData.name, 'user-description': userData.about }
+  )
   editProfilePopup.open(); // opening of the popup
 });
 
