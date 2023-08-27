@@ -31,14 +31,14 @@ const user = new UserInfo ( // class with user information
 // creating a profile editing popup
 const editProfilePopup = new PopupWithForm (
   popupSelectors.editProfile,
-  { submit: user.setUserInfo.bind(user) }
+  { handleSubmit: user.setUserInfo.bind(user) }
 );
 
 // creating a popup for changing the user's avatar
 const changeAvatarPopup = new PopupWithForm (
   popupSelectors.editAvatar,
   {
-    submit: user.setUserInfo.bind(user)
+    handleSubmit: user.setUserInfo.bind(user)
   }
 );
 
@@ -46,10 +46,12 @@ const changeAvatarPopup = new PopupWithForm (
 const createCardPopup = new PopupWithForm (
   popupSelectors.createCard,
   {
-    submit: (subInfoCard) => {
+    handleSubmit: (subInfoCard) => {
+      createCardPopup.renderLoading(true);
       return api.postNewCard(subInfoCard)
         .then((cardInfo) => {
           renderPhotoCard (cardInfo);
+          createCardPopup.renderLoading(false);
         })
         .catch((err) => {
           console.log(err);
@@ -76,7 +78,7 @@ function renderPhotoCard (photoCardItem) {
     '#card',
     {
       deleteCard: (card) => {
-        deleteCardPopup.callBackDeleteItem(card);
+        deleteCardPopup.setItemToDelete(card);
         deleteCardPopup.open();
       },
       likeCardApi: api.likeCard.bind(api),

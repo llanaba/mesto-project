@@ -1,19 +1,32 @@
 import Popup from './Popup.js';
 
 export default class PopupWithForm extends Popup {
-  constructor(selector, { submit }) {
+  constructor(selector, { handleSubmit }) {
     super(selector);
-    this._submit = submit; // the submit function of the form
-    this._form = this._popupElement.querySelector('.form'); // form element in the popup
+    this._handleSubmit = handleSubmit; // the submit function of the form
+    this._inputList = [...this._form.querySelectorAll('.form__input-text')];
+    this._buttonSubmitText = this._buttonSubmit.textContent
 	}
 
-  // getting information from input fields
+  // getting data from input fields
   _getInputValues () {
-    this._inputList = [...this._form.querySelectorAll('.form__input-text')];
-
     this._formValues = {};
     this._inputList.forEach(input => this._formValues[input.name] = input.value);
     return this._formValues;
+  }
+
+  renderLoading(isLoading, loadingText='Сохранение...') {
+    if (isLoading) {
+      this._buttonSubmit.textContent = loadingText;
+    } else {
+      this._buttonSubmit.textContent = this._buttonSubmitText;
+    }
+  }
+
+  setInputValues(data) {
+    this._inputList.forEach((input) => {
+      input.value = data[input.name];
+    });
   }
 
   // adding event handlers
@@ -21,11 +34,10 @@ export default class PopupWithForm extends Popup {
     super.setEventListeners();
     this._form.addEventListener('submit', (evt) => {
       evt.preventDefault();
-      const rezSubmit = this._submit(this._getInputValues());
-      if (rezSubmit) {
-        rezSubmit
-          .then((rez) => {
-            this._form.reset();
+      const resSubmit = this._handleSubmit(this._getInputValues());
+      if (resSubmit) {
+        resSubmit
+          .then((res) => {
             this.close();
           })
           .catch((err) => {

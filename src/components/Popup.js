@@ -1,7 +1,10 @@
 export default class Popup {
   constructor (selector) {
     this._popupElement = document.querySelector(selector);
-    this._handleEscClose = this._handleEscClose.bind(this)
+    this._form = this._popupElement.querySelector('.form');
+    this._handleEscClose = this._handleEscClose.bind(this);
+    this._buttonClose = this._popupElement.querySelector('.popup__button-close');
+    this._buttonSubmit = this._popupElement.querySelector('.popup__button-save');
   }
 
   // closing by pressing Esc
@@ -23,7 +26,7 @@ export default class Popup {
     this._popupElement.addEventListener('click', (evt) => {
       this._handleOverlayClose(evt);
     });
-    this._popupElement.querySelector('.popup__button-close').addEventListener('click', (evt) => {
+    this._buttonClose.addEventListener('click', (evt) => {
       this.close();
     });
   }

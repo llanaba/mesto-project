@@ -4,11 +4,10 @@ export default class PopupWithConfirmation extends Popup {
   constructor (selector, { deleteCardApi }) {
     super(selector);
     this._deleteCard = deleteCardApi;
-    this._form = this._popupElement.querySelector('.form');
   }
 
   // setting an item to delete
-  callBackDeleteItem (data) {
+  setItemToDelete (data) {
     this._data = data;
   }
 

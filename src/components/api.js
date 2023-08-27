@@ -17,7 +17,6 @@ export default class Api {
 
   _request(endpoint, options) {
     const url = this._baseUrl + endpoint
-    console.log(this._baseUrl + endpoint)
     return fetch(url, options).then(this._getResponseData)
   }
 
