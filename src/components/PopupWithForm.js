@@ -1,12 +1,10 @@
 import Popup from './Popup.js';
 
 export default class PopupWithForm extends Popup {
-  // constructor(selector, validate, { submit }) {
   constructor(selector, { submit }) {
     super(selector);
     this._submit = submit; // the submit function of the form
-    this._form = this._element.querySelector('.form'); // form element in the popup
-    // validate(this._form); // enabling validation of form fields
+    this._form = this._popupElement.querySelector('.form'); // form element in the popup
 	}
 
   // getting information from input fields

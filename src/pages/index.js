@@ -28,17 +28,15 @@ const user = new UserInfo ( // class with user information
   }
 );
 
-// creating a profile editing setup
+// creating a profile editing popup
 const editProfilePopup = new PopupWithForm (
   popupSelectors.editProfile,
-  // validate,
   { submit: user.setUserInfo.bind(user) }
 );
 
 // creating a popup for changing the user's avatar
 const changeAvatarPopup = new PopupWithForm (
   popupSelectors.editAvatar,
-  // validate,
   {
     submit: user.setUserInfo.bind(user)
   }
@@ -47,7 +45,6 @@ const changeAvatarPopup = new PopupWithForm (
 // creating a pop-up for creating a photo card
 const createCardPopup = new PopupWithForm (
   popupSelectors.createCard,
-  // validate,
   {
     submit: (subInfoCard) => {
       return api.postNewCard(subInfoCard)
@@ -108,13 +105,7 @@ function loadInitialPage() {
     });
 }
 
-// Enabling validation for all forms on the site
-// relation to the form validation class (FormValidator)
-// function validate(form) {
-//   const validator = new FormValidator(validationSelectors, form);
-//   validator.setEventListeners(); // enabling event handlers
-// }
-
+// * * * MAIN CODE * * *
 
 // Enabling validation for all forms on the site
 const formValidators = {}
@@ -131,7 +122,6 @@ const enableValidation = (validationSelectors) => {
 
 enableValidation(validationSelectors);
 
-// * * * MAIN CODE * * *
 
 // Filling the page with existing data
 loadInitialPage();
@@ -153,7 +143,6 @@ buttons.changeAvatar.addEventListener('click', (evt) => {
 // Creating New Card popup
 createCardPopup.setEventListeners(); // enabling event handlers
 buttons.addCard.addEventListener('click', (evt) => {
-  console.log(createCardPopup)
   createCardPopup.open(); // opening of the popup
 });
 
