@@ -12,30 +12,31 @@ export default class Api {
     if (!res.ok) {
       return Promise.reject(`Ошибка: ${res.status}`);
     }
-    return res.json()
+    return res.json();
   }
 
+  // universal server requests
   _request(endpoint, options) {
-    const url = this._baseUrl + endpoint
-    return fetch(url, options).then(this._getResponseData)
+    const url = this._baseUrl + endpoint;
+    return fetch(url, options).then(this._getResponseData);
   }
 
   // METHODS TO DEAL WITH CARDS
   // Getting photo cards from the server
   getInitialCards () {
-    return this._request('cards', {method: 'GET',headers: this._headers})
+    return this._request('cards', { method: 'GET', headers: this._headers });
   }
 
   // Liking and unliking actions being sent to the server
   likeCard (cardId, method) {
     const endpoint = `cards/likes/${cardId}`
-    return this._request(endpoint, {method: method, headers: this._headers})
+    return this._request(endpoint, { method: method, headers: this._headers });
   }
 
   // deleting a photo card
   deleteCard (cardId) {
     const endpoint = `cards/${cardId}`;
-    return this._request(endpoint, {method: 'DELETE', headers: this._headers})
+    return this._request(endpoint, { method: 'DELETE', headers: this._headers });
   }
 
   // sending a new photo card
@@ -47,7 +48,7 @@ export default class Api {
         name: cardName,
         link: imageLink
       })
-    })
+    });
   }
 
   // METHODS TO DEAL WITH USER
@@ -56,7 +57,7 @@ export default class Api {
     return this._request('users/me', {
       method: 'GET',
       headers: this._headers
-    })
+    });
   }
 
   // updating user information
@@ -68,7 +69,7 @@ export default class Api {
         name: userName,
         about: userDescription
       })
-    })
+    });
   }
 
   // posting updated user avatar to the server
@@ -79,6 +80,6 @@ export default class Api {
       body: JSON.stringify({
         avatar: avatarUrl
       })
-    })
+    });
   }
 }
