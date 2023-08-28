@@ -12,7 +12,7 @@ export default class Section {
 
   // clearing the container of all photo cards
   clear() {
-    this._container.innerHtml = ""
+    this._container.innerHtml = "";
   }
 
   // creating element markup
