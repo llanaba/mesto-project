@@ -22,68 +22,24 @@ import './index.css'
 let initialCardList; // storage for photo cards
 let user; // storage for user data
 const api = new Api(config); // a class for working with the server
+const formValidators = {}; // Enabling validation for all forms on the site
 
 // creating a profile editing popup
 const editProfilePopup = new PopupWithForm (
   popupSelectors.editProfile,
-  {
-    handleSubmit: (data) => {
-      editProfilePopup.renderLoading(true);
-      const rezApi = api.updateProfileInfo(data['user-name'], data['user-description']);
-      rezApi
-        .then((updatedData) => {
-          user.setUserInfo(updatedData);
-        })
-        .catch((err) => {
-          console.log(err);
-          createCardPopup.renderLoading(true, 'Ошибка сохранения');
-          setTimeout(createCardPopup.renderLoading.bind(createCardPopup), timeErr * 1000, false);
-        });
-      return rezApi;
-    }
-  }
+  { handleSubmit: handleProfileFormSubmit }
 );
 
 // creating a popup for changing the user's avatar
 const changeAvatarPopup = new PopupWithForm (
   popupSelectors.editAvatar,
-  {
-    handleSubmit: (data) => {
-      changeAvatarPopup.renderLoading(true);
-      const rezApi = api.updateAvatar(data['avatar-link']);
-      rezApi
-        .then((updatedData) => {
-          user.setUserInfo(updatedData);
-        })
-        .catch((err) => {
-          console.log(err);
-          changeAvatarPopup.renderLoading(true, 'Ошибка сохранения');
-          setTimeout(changeAvatarPopup.renderLoading.bind(changeAvatarPopup), timeErr * 1000, false);
-        });
-      return rezApi;
-    }
-  }
+  { handleSubmit: handleAvatarFormSubmit }
 );
 
 // creating a pop-up for creating a photo card
 const createCardPopup = new PopupWithForm (
   popupSelectors.createCard,
-  {
-    handleSubmit: (subInfoCard) => {
-      createCardPopup.renderLoading(true);
-      const rezApi = api.postNewCard(subInfoCard);
-      rezApi
-        .then((cardInfo) => {
-          renderPhotoCard(cardInfo);
-        })
-        .catch((err) => {
-          console.log(err);
-          createCardPopup.renderLoading(true, 'Ошибка сохранения');
-          setTimeout(createCardPopup.renderLoading.bind(createCardPopup), timeErr * 1000, false);
-        });
-      return rezApi;
-    }
-  }
+  { handleSubmit: handleCardFormSubmit }
 );
 
 // creating a pop-up for opening an image of a photo card
@@ -95,22 +51,67 @@ const deleteCardPopup = new PopupWithConfirmation (
   { deleteCardApi: api.deleteCard.bind(api) }
 );
 
-// creating a photo card and placing it in storage
-function renderPhotoCard (photoCardItem) {
+// the general logic of the submit button
+function handleSubmit (request, popupInstance, loadingText = 'Сохранение...') {
+  popupInstance.renderLoading(true, loadingText);
+  request()
+    .then(() => {
+      popupInstance.close()
+    })
+    .catch((err) => {
+      console.error(`Ошибка: ${err}`);
+    })
+    .finally(() => {
+      popupInstance.renderLoading(false);
+    });
+}
+
+// submit profile changes
+function handleProfileFormSubmit (inputValues) {
+  function makeRequest() {
+    return api.updateProfileInfo(inputValues['user-name'], inputValues['user-description']).then((updatedData) => {
+      user.setUserInfo(updatedData);
+    });
+  }
+  handleSubmit(makeRequest, editProfilePopup);
+}
+
+// submit avatar changes
+function handleAvatarFormSubmit (inputValues) {
+  function makeRequest() {
+    return api.updateAvatar(inputValues['avatar-link']).then((updatedData) => {
+      user.setUserInfo(updatedData);
+    });
+  }
+  handleSubmit(makeRequest, changeAvatarPopup);
+}
+
+// submit photo creation
+function handleCardFormSubmit (inputValues) {
+  function makeRequest() {
+    return api.postNewCard(inputValues).then((cardInfo) => {
+      const newCard = createCard(cardInfo);
+      initialCardList.addItem(newCard);
+    });
+  }
+  handleSubmit(makeRequest, createCardPopup);
+}
+
+// create photo card
+function createCard (photoCardItem) {
   const card = new Card (
     photoCardItem,
     '#card',
     {
-      deleteCard: (card) => {
-        deleteCardPopup.setItemToDelete(card);
+      deleteCard: (photoCardItem) => {
+        deleteCardPopup.setItemToDelete(photoCardItem);
         deleteCardPopup.open();
       },
       likeCardApi: api.likeCard.bind(api),
       openViewImagePopup: viewImagePopup.open.bind(viewImagePopup)
     }
   );
-  const cardElement = card.generate(user.getUserInfo());
-  initialCardList.addItem(cardElement);
+  return card.generate(user.getUserInfo());
 }
 
 // uploading user information and drawing photo cards from the server
@@ -124,20 +125,16 @@ function loadInitialPage() {
       user.setUserInfo(userData);
       initialCardList = new Section ({
         items: cardsData,
-        renderer: renderPhotoCard
+        renderer: createCard
       }, '.cards__list');
       initialCardList.renderItems();
     })
     .catch((err) => {
-      console.log(err);
+      console.error(`Ошибка: ${err}`);
     });
 }
 
-// * * * MAIN CODE * * *
-
-// Enabling validation for all forms on the site
-const formValidators = {};
-
+// creating a form object and enabling their validation
 function enableValidation (validationSelectors) {
   const formList = Array.from(document.querySelectorAll(validationSelectors.formSelector));
   formList.forEach((formElement) => {
@@ -148,6 +145,9 @@ function enableValidation (validationSelectors) {
   })
 }
 
+// * * * MAIN CODE * * *
+
+// enabling form validation
 enableValidation(validationSelectors);
 
 // Filling the page with existing data
@@ -164,6 +164,7 @@ buttons.editProfile.addEventListener('click', (evt) => {
   editProfilePopup.open(); // opening of the popup
 });
 
+// change Avatar Popup
 changeAvatarPopup.setEventListeners(); // enabling event handlers
 buttons.changeAvatar.addEventListener('click', (evt) => {
   formValidators[nameForms.editAvatar].resetValidation();
