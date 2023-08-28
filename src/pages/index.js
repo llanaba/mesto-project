@@ -3,7 +3,9 @@ import {
   userSelectors,
   popupSelectors,
   validationSelectors,
-  buttons
+  buttons,
+  timeErr,
+  nameForms
 } from '../utils/constants.js'
 import Api from '../components/Api.js'
 import UserInfo from '../components/UserInfo.js'
@@ -26,15 +28,18 @@ const editProfilePopup = new PopupWithForm (
   popupSelectors.editProfile,
   {
     handleSubmit: (data) => {
-    editProfilePopup.renderLoading(true);
-    return api.updateProfileInfo(data['user-name'], data['user-description'])
-      .then((updatedData) => {
-        user.setUserInfo(updatedData);
-        editProfilePopup.renderLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      editProfilePopup.renderLoading(true);
+      const rezApi = api.updateProfileInfo(data['user-name'], data['user-description']);
+      rezApi
+        .then((updatedData) => {
+          user.setUserInfo(updatedData);
+        })
+        .catch((err) => {
+          console.log(err);
+          createCardPopup.renderLoading(true, 'Ошибка сохранения');
+          setTimeout(createCardPopup.renderLoading.bind(createCardPopup), timeErr * 1000, false);
+        });
+      return rezApi;
     }
   }
 );
@@ -45,15 +50,17 @@ const changeAvatarPopup = new PopupWithForm (
   {
     handleSubmit: (data) => {
       changeAvatarPopup.renderLoading(true);
-      console.log(data)
-      return api.updateAvatar(data['avatar-link'])
+      const rezApi = api.updateAvatar(data['avatar-link']);
+      rezApi
         .then((updatedData) => {
           user.setUserInfo(updatedData);
-          changeAvatarPopup.renderLoading(false);
         })
         .catch((err) => {
           console.log(err);
+          changeAvatarPopup.renderLoading(true, 'Ошибка сохранения');
+          setTimeout(changeAvatarPopup.renderLoading.bind(changeAvatarPopup), timeErr * 1000, false);
         });
+      return rezApi;
     }
   }
 );
@@ -64,14 +71,17 @@ const createCardPopup = new PopupWithForm (
   {
     handleSubmit: (subInfoCard) => {
       createCardPopup.renderLoading(true);
-      return api.postNewCard(subInfoCard)
+      const rezApi = api.postNewCard(subInfoCard);
+      rezApi
         .then((cardInfo) => {
-          renderPhotoCard (cardInfo);
-          createCardPopup.renderLoading(false);
+          renderPhotoCard(cardInfo);
         })
         .catch((err) => {
           console.log(err);
+          createCardPopup.renderLoading(true, 'Ошибка сохранения');
+          setTimeout(createCardPopup.renderLoading.bind(createCardPopup), timeErr * 1000, false);
         });
+      return rezApi;
     }
   }
 );
@@ -82,9 +92,7 @@ const viewImagePopup = new PopupWithImage(popupSelectors.viewImage);
 // confirmation of photo card deletion
 const deleteCardPopup = new PopupWithConfirmation (
   popupSelectors.deleteCard,
-  {
-    deleteCardApi: api.deleteCard.bind(api)
-  }
+  { deleteCardApi: api.deleteCard.bind(api) }
 );
 
 // creating a photo card and placing it in storage
@@ -112,10 +120,7 @@ function loadInitialPage() {
     api.getInitialCards()
   ])
     .then(([ userData, cardsData ]) => {
-      user = new UserInfo (
-        userSelectors,
-        userData._id,
-      );
+      user = new UserInfo (userSelectors);
       user.setUserInfo(userData);
       initialCardList = new Section ({
         items: cardsData,
@@ -131,13 +136,13 @@ function loadInitialPage() {
 // * * * MAIN CODE * * *
 
 // Enabling validation for all forms on the site
-const formValidators = {}
+const formValidators = {};
 
-const enableValidation = (validationSelectors) => {
-  const formList = Array.from(document.querySelectorAll(validationSelectors.formSelector))
+function enableValidation (validationSelectors) {
+  const formList = Array.from(document.querySelectorAll(validationSelectors.formSelector));
   formList.forEach((formElement) => {
-    const validator = new FormValidator(validationSelectors, formElement)
-    const formName = formElement.getAttribute('name')
+    const validator = new FormValidator(validationSelectors, formElement);
+    const formName = formElement.getAttribute('name');
     formValidators[formName] = validator;
     validator.enableValidation();
   })
@@ -153,22 +158,22 @@ loadInitialPage();
 // Profile Editing popup (info and avatar)
 editProfilePopup.setEventListeners(); // enabling event handlers
 buttons.editProfile.addEventListener('click', (evt) => {
-  formValidators['edit-profile-form'].resetValidation();
+  formValidators[nameForms.editProfile].resetValidation();
   const userData = user.getUserInfo();
-  editProfilePopup.setInputValues(
-    { 'user-name': userData.name, 'user-description': userData.about }
-  )
+  editProfilePopup.setInputValues({ 'user-name': userData.name, 'user-description': userData.about });
   editProfilePopup.open(); // opening of the popup
 });
 
 changeAvatarPopup.setEventListeners(); // enabling event handlers
 buttons.changeAvatar.addEventListener('click', (evt) => {
+  formValidators[nameForms.editAvatar].resetValidation();
   changeAvatarPopup.open(); // opening of the popup
 });
 
 // Creating New Card popup
 createCardPopup.setEventListeners(); // enabling event handlers
 buttons.addCard.addEventListener('click', (evt) => {
+  formValidators[nameForms.createCard].resetValidation();
   createCardPopup.open(); // opening of the popup
 });
 
