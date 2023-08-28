@@ -22,7 +22,7 @@ export default class PopupWithConfirmation extends Popup {
           this.close();
         })
         .catch((err) => {
-          console.log(err);
+          console.error(`Ошибка: ${err}`);
         });
     });
   }
