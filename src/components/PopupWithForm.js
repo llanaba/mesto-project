@@ -5,7 +5,8 @@ export default class PopupWithForm extends Popup {
     super(selector);
     this._handleSubmit = handleSubmit; // the submit function of the form
     this._inputList = [...this._form.querySelectorAll('.form__input-text')];
-    this._buttonSubmitText = this._buttonSubmit.textContent
+    this._buttonSubmit = this._popupElement.querySelector('.popup__button-save');
+    this._buttonSubmitText = this._buttonSubmit.textContent;
 	}
 
   // getting data from input fields
@@ -15,7 +16,8 @@ export default class PopupWithForm extends Popup {
     return this._formValues;
   }
 
-  renderLoading(isLoading, loadingText='Сохранение...') {
+  // enabling and disabling the upload status for the submit button
+  renderLoading(isLoading, loadingText = 'Сохранение...') {
     if (isLoading) {
       this._buttonSubmit.textContent = loadingText;
     } else {
@@ -23,6 +25,7 @@ export default class PopupWithForm extends Popup {
     }
   }
 
+  // setting input fields
   setInputValues(data) {
     this._inputList.forEach((input) => {
       input.value = data[input.name];
@@ -34,16 +37,13 @@ export default class PopupWithForm extends Popup {
     super.setEventListeners();
     this._form.addEventListener('submit', (evt) => {
       evt.preventDefault();
-      const resSubmit = this._handleSubmit(this._getInputValues());
-      if (resSubmit) {
-        resSubmit
-          .then((res) => {
-            this.close();
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
+      this._handleSubmit(this._getInputValues())
+        .then((res) => {
+          this.close();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     });
   }
 
@@ -51,5 +51,6 @@ export default class PopupWithForm extends Popup {
   close () {
     super.close();
     this._form.reset();
+    this.renderLoading(false);
   }
 }
