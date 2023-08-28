@@ -64,19 +64,15 @@ export default class Card {
     });
   }
 
+  // checking whether the user liked the photo card
   _userLikesCard (userId) {
-    if (this._likes) {
-      const userLikes = this._likes.some(function(fan) {
-        return fan._id === userId
-      });
-      return userLikes
-    }
-    return false
+    return this._likes.some((like) => like._id === userId);
   }
+
   // returns a fully finished card element
   generate({ userId }) {
     if (this._owner._id === userId) this._userAuthor = true;
-    if (this._likes.some((like) => like._id === userId)) this._userLike = true;
+    if (this._userLikesCard(userId)) this._userLike = true;
     this._element = this._getElement();
 
     // we draw something that does not depend on the user
