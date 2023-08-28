@@ -1,13 +1,8 @@
 export default class UserInfo {
-  constructor (
-    { nameSelector, infoSelector, avatarSelector },
-    userId
-  ) {
+  constructor ({ nameSelector, infoSelector, avatarSelector }) {
     this._userNameElement = document.querySelector(nameSelector); // user name element
-    console.log(this._userNameElement.textContent)
     this._userAboutElement = document.querySelector(infoSelector); // user description element
     this._userAvatarElement = document.querySelector(avatarSelector); // the user's avatar element
-    this._userId = userId;
   }
 
   // fills the form with user's data
