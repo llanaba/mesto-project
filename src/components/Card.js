@@ -47,7 +47,7 @@ export default class Card {
         this._element.buttons.buttonLikeElement.classList.toggle('card__button-like_active');
       })
       .catch((err) => {
-        console.log(err);
+        console.error(`Ошибка: ${err}`);
       });
   }
 
