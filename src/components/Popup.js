@@ -4,7 +4,6 @@ export default class Popup {
     this._form = this._popupElement.querySelector('.form');
     this._handleEscClose = this._handleEscClose.bind(this);
     this._buttonClose = this._popupElement.querySelector('.popup__button-close');
-    this._buttonSubmit = this._popupElement.querySelector('.popup__button-save');
   }
 
   // closing by pressing Esc
