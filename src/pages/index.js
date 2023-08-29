@@ -4,7 +4,6 @@ import {
   popupSelectors,
   validationSelectors,
   buttons,
-  timeErr,
   nameForms
 } from '../utils/constants.js'
 import Api from '../components/Api.js'
@@ -69,7 +68,8 @@ function handleSubmit (request, popupInstance, loadingText = 'Сохранени
 // submit profile changes
 function handleProfileFormSubmit (inputValues) {
   function makeRequest() {
-    return api.updateProfileInfo(inputValues['user-name'], inputValues['user-description']).then((updatedData) => {
+    return api.updateProfileInfo(inputValues['user-name'], inputValues['user-description'])
+      .then((updatedData) => {
       user.setUserInfo(updatedData);
     });
   }
@@ -79,7 +79,8 @@ function handleProfileFormSubmit (inputValues) {
 // submit avatar changes
 function handleAvatarFormSubmit (inputValues) {
   function makeRequest() {
-    return api.updateAvatar(inputValues['avatar-link']).then((updatedData) => {
+    return api.updateAvatar(inputValues['avatar-link'])
+      .then((updatedData) => {
       user.setUserInfo(updatedData);
     });
   }
@@ -89,7 +90,8 @@ function handleAvatarFormSubmit (inputValues) {
 // submit photo creation
 function handleCardFormSubmit (inputValues) {
   function makeRequest() {
-    return api.postNewCard(inputValues).then((cardInfo) => {
+    return api.postNewCard(inputValues)
+      .then((cardInfo) => {
       const newCard = createCard(cardInfo);
       initialCardList.addItem(newCard);
     });

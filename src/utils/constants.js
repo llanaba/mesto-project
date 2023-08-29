@@ -49,9 +49,6 @@ export const buttons = {
   changeAvatar: document.querySelector('.profile__avatar-overlay'),
 };
 
-// time to reset the error
-export const timeErr = 4; // seconds
-
 // form names
 export const nameForms = {
   editProfile: 'edit-profile-form',
