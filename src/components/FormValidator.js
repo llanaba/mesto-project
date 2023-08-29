@@ -56,8 +56,16 @@ export default class FormValidator {
     }
   }
 
+  // method for removing error messages from the form
+  resetValidation() {
+    this._toggleButtonState();
+    this._inputList.forEach((inputElement) => {
+      this._hideInputError(inputElement)
+    })
+  }
+
   // disabling the listener for each input with validation + enabling and disabling the submit button
-  setEventListeners () {
+  enableValidation () {
     this._toggleButtonState();
     this._inputList.forEach((inputElement) => {
       inputElement.addEventListener('input', () => {

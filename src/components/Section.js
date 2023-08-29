@@ -12,7 +12,7 @@ export default class Section {
 
   // clearing the container of all photo cards
   clear() {
-    [...this._container.querySelectorAll('.card')].forEach((card) => card.remove());
+    this._container.innerHtml = "";
   }
 
   // creating element markup
@@ -20,7 +20,8 @@ export default class Section {
     this.clear();
 
     this._renderedItems.forEach(item => {
-      this._renderer(item);
+      const newItem = this._renderer(item);
+      this.addItem(newItem);
     });
   }
 }

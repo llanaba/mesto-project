@@ -4,11 +4,10 @@ export default class PopupWithConfirmation extends Popup {
   constructor (selector, { deleteCardApi }) {
     super(selector);
     this._deleteCard = deleteCardApi;
-    this._form = this._element.querySelector('.form');
   }
-  
+
   // setting an item to delete
-  callBackDeleteItem (data) {
+  setItemToDelete (data) {
     this._data = data;
   }
 
@@ -23,7 +22,7 @@ export default class PopupWithConfirmation extends Popup {
           this.close();
         })
         .catch((err) => {
-          console.log(err);
+          console.error(`Ошибка: ${err}`);
         });
     });
   }

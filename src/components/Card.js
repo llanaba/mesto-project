@@ -47,7 +47,7 @@ export default class Card {
         this._element.buttons.buttonLikeElement.classList.toggle('card__button-like_active');
       })
       .catch((err) => {
-        console.log(err);
+        console.error(`Ошибка: ${err}`);
       });
   }
 
@@ -63,12 +63,16 @@ export default class Card {
       this._viewImage(this._name, this._link);
     });
   }
-  
-  // returns a fully finished card element
-  generate({ _id: userId }) {
-    if (this._owner._id === userId) this._userAuthor = true;
-    if (this._likes.some((like) => like === userId)) this._userLike = true;
 
+  // checking whether the user liked the photo card
+  _userLikesCard (userId) {
+    return this._likes.some((like) => like._id === userId);
+  }
+
+  // returns a fully finished card element
+  generate({ userId }) {
+    if (this._owner._id === userId) this._userAuthor = true;
+    if (this._userLikesCard(userId)) this._userLike = true;
     this._element = this._getElement();
 
     // we draw something that does not depend on the user
