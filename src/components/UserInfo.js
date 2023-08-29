@@ -1,33 +1,24 @@
-class UserInfo {
-  constructor ({ name = '', about = '', avatar = '', _id = '', cohort = '' }, { setInfoServer, getInfoServer }) {
-    this._name = name;
-    this._about = about;
-    this._avatar = avatar;
-    this._id = _id;
-    this._cohort = cohort;
-
-    this._setInfoServer = setInfoServer;
-    this._getInfoServer = getInfoServer;
+export default class UserInfo {
+  constructor ({ nameSelector, infoSelector, avatarSelector }) {
+    this._userNameElement = document.querySelector(nameSelector); // user name element
+    this._userAboutElement = document.querySelector(infoSelector); // user description element
+    this._userAvatarElement = document.querySelector(avatarSelector); // the user's avatar element
   }
 
-  // getting user information from the server and returning this information
+  // fills the form with user's data
   getUserInfo () {
-    const userInfo = this._getInfoServer();
-    if (userInfo.ok) {
-      const { name, about, avatar, _id, cohort } = userInfo;
-      this._name = name;
-      this._about = about;
-      this._avatar = avatar;
-      this._id = _id;
-      this._cohort = cohort;
-      return this;
-    } else {
-      return false;
+    return {
+      name: this._userNameElement.textContent,
+      about: this._userAboutElement.textContent,
+      userId: this._userId,
     }
   }
 
-  // sending user information to the server
-  setUserInfo () {
-    this._setInfoServer(this);
+  // renders user's data on the page
+  setUserInfo({ name, about, avatar, _id }) {
+    this._userNameElement.textContent = name;
+    this._userAboutElement.textContent = about;
+    this._userAvatarElement.src = avatar;
+    this._userId = _id;
   }
 }

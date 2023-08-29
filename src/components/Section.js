@@ -1,23 +1,27 @@
 export default class Section {
-  constructor({ items, renderer }, containerSelector) {
-    this._renderedItems = items;
-    this._renderer = renderer;
-    this._container = document.querySelector(containerSelector);
+  constructor ({ items, renderer }, containerSelector) {
+    this._renderedItems = items.reverse(); // array with photo card information
+    this._renderer = renderer; // function for creating photo cards
+    this._container = document.querySelector(containerSelector); // the element in which are placed
   }
 
-  addItem(element) {
-    this._container.append(element);
+  // adding markup to a container
+  addItem (element) {
+    this._container.prepend(element);
   }
 
-  // clear() {
-  //   this._container.innerHTML = '';
-  // }
+  // clearing the container of all photo cards
+  clear() {
+    this._container.innerHtml = "";
+  }
 
-  renderItems() {
-    // this.clear();
+  // creating element markup
+  renderItems () {
+    this.clear();
 
     this._renderedItems.forEach(item => {
-      this._renderer(item);
+      const newItem = this._renderer(item);
+      this.addItem(newItem);
     });
   }
 }

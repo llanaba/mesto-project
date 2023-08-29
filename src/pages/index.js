@@ -1,171 +1,187 @@
+import {
+  config,
+  userSelectors,
+  popupSelectors,
+  validationSelectors,
+  buttons,
+  nameForms
+} from '../utils/constants.js'
+import Api from '../components/Api.js'
+import UserInfo from '../components/UserInfo.js'
+import Section from '../components/Section.js'
+import Card from '../components/Card.js'
+import PopupWithImage from '../components/PopupWithImage.js';
+import PopupWithForm from '../components/PopupWithForm.js';
+import PopupWithConfirmation from '../components/PopupWithConfirmation.js';
+import FormValidator from '../components/FormValidator.js';
 import './index.css'
-
-import { enableValidation, toggleButtonState } from '../components/validate.js';
-import { openPopup, closePopup } from '../components/modal.js';
-import {
-  handleAddCardClick,
-  handleCardFormSubmit,
-  renderInitialCards,
-  confirmDeletion,
-  } from '../components/cards.js';
-
-import { setClosePopupEventListeners } from '../components/modal.js';
-
-import {
-  getUser,
-  updateProfileInfo,
-  updateAvatar,
-  renderLoading,
-  getInitialCards,
-  } from '../components/api.js';
-
-const validationSelectors = {
-  formSelector: '.form',
-  inputSelector: '.form__input-text',
-  submitButtonSelector: '.popup__button-save',
-  inactiveButtonClass: 'popup__button-save_disabled',
-  inputErrorClass: 'form__input-text_error',
-  errorClass: 'form__input-error_active'
-}
 
 // * * * VARIABLES AND FUNCTIONS * * *
 
-// Popup windows
-const popups = Array.from(document.querySelectorAll('.popup'))
-const popupProfileEdit = document.querySelector('.popup_edit-profile');
-const popupAddCard = document.querySelector('.popup_add-card');
-const popupAvatarEdit = document.querySelector('.popup_edit-avatar');
+let initialCardList; // storage for photo cards
+let user; // storage for user data
+const api = new Api(config); // a class for working with the server
+const formValidators = {}; // Enabling validation for all forms on the site
 
-// Card-related buttons and template
-const addCardForm = document.querySelector('form[name="new-card-form"]');
-const addCardButton = document.querySelector('.profile__button-add');
-const deleteCardForm = document.querySelector('form[name="confirm-delete-form"]')
+// creating a profile editing popup
+const editProfilePopup = new PopupWithForm (
+  popupSelectors.editProfile,
+  { handleSubmit: handleProfileFormSubmit }
+);
 
-// Profile-related buttons, form, fields and values
-const editProfileButton = document.querySelector('.profile__button-edit');
-const editProfileForm = document.querySelector('form[name="edit-profile-form"]');
-const editProfileSubmitButton = editProfileForm.querySelector('.popup__button-save');
-const editProfileSubmitButtonOrigText = editProfileSubmitButton.textContent;
-const editAvatarButton = document.querySelector('.profile__avatar-overlay');
-const editAvatarForm = document.querySelector('.form[name="edit-avatar-form"]');
-const editAvatarSubmitButton = editAvatarForm.querySelector('.popup__button-save')
-const editAvatarSubmitButtonOrigText = editAvatarSubmitButton.textContent;
-const avatarInput = popupAvatarEdit.querySelector('input[name="avatar-link"]');
-const nameInput = popupProfileEdit.querySelector('input[name="user-name"]');
-const descriptionInput = popupProfileEdit.querySelector('input[name="user-description"]');
-const userName = document.querySelector('h1.profile__name');
-const userDescription = document.querySelector('p.profile__description');
-const userAvatar = document.querySelector('.profile__avatar');
+// creating a popup for changing the user's avatar
+const changeAvatarPopup = new PopupWithForm (
+  popupSelectors.editAvatar,
+  { handleSubmit: handleAvatarFormSubmit }
+);
 
-// Functions responsible for Profile Editing
+// creating a pop-up for creating a photo card
+const createCardPopup = new PopupWithForm (
+  popupSelectors.createCard,
+  { handleSubmit: handleCardFormSubmit }
+);
 
-function handleEditProfileClick() {
-  nameInput.value = userName.textContent;
-  descriptionInput.value = userDescription.textContent;
-  openPopup(popupProfileEdit);
-}
+// creating a pop-up for opening an image of a photo card
+const viewImagePopup = new PopupWithImage(popupSelectors.viewImage);
 
-function handleEditProfileFormSubmit(evt) {
-  evt.preventDefault();
-  renderLoading(true, editProfileSubmitButton)
-  updateProfileInfo(nameInput.value, descriptionInput.value)
+// confirmation of photo card deletion
+const deleteCardPopup = new PopupWithConfirmation (
+  popupSelectors.deleteCard,
+  { deleteCardApi: api.deleteCard.bind(api) }
+);
+
+// the general logic of the submit button
+function handleSubmit (request, popupInstance, loadingText = 'Сохранение...') {
+  popupInstance.renderLoading(true, loadingText);
+  request()
     .then(() => {
-      renderUserInfo('me');
-    })
-    .then(() => {
-      renderLoading(false, editProfileSubmitButton, editProfileSubmitButtonOrigText)
-      closePopup(popupProfileEdit);
+      popupInstance.close()
     })
     .catch((err) => {
-      console.log(err);
+      console.error(`Ошибка: ${err}`);
     })
+    .finally(() => {
+      popupInstance.renderLoading(false);
+    });
 }
 
-function handleEditAvatarClick() {
-  openPopup(popupAvatarEdit);
+// submit profile changes
+function handleProfileFormSubmit (inputValues) {
+  function makeRequest() {
+    return api.updateProfileInfo(inputValues['user-name'], inputValues['user-description'])
+      .then((updatedData) => {
+      user.setUserInfo(updatedData);
+    });
+  }
+  handleSubmit(makeRequest, editProfilePopup);
 }
 
-function handleEditAvatarFormSubmit(evt) {
-  evt.preventDefault();
-  renderLoading(true, editAvatarSubmitButton);
-  updateAvatar(avatarInput.value)
-    .then(() => {
-      renderUserInfo('me')
-    })
-    .then(() => {
-      renderLoading(false, editAvatarSubmitButton, editAvatarSubmitButtonOrigText)
-      editAvatarForm.reset();
-      toggleButtonState([avatarInput], editAvatarSubmitButton, 'popup__button-save_disabled')
-      closePopup(popupAvatarEdit);
-    })
-    .catch((err) => {
-      console.log(err);
-    })
+// submit avatar changes
+function handleAvatarFormSubmit (inputValues) {
+  function makeRequest() {
+    return api.updateAvatar(inputValues['avatar-link'])
+      .then((updatedData) => {
+      user.setUserInfo(updatedData);
+    });
+  }
+  handleSubmit(makeRequest, changeAvatarPopup);
 }
 
+// submit photo creation
+function handleCardFormSubmit (inputValues) {
+  function makeRequest() {
+    return api.postNewCard(inputValues)
+      .then((cardInfo) => {
+      const newCard = createCard(cardInfo);
+      initialCardList.addItem(newCard);
+    });
+  }
+  handleSubmit(makeRequest, createCardPopup);
+}
+
+// create photo card
+function createCard (photoCardItem) {
+  const card = new Card (
+    photoCardItem,
+    '#card',
+    {
+      deleteCard: (photoCardItem) => {
+        deleteCardPopup.setItemToDelete(photoCardItem);
+        deleteCardPopup.open();
+      },
+      likeCardApi: api.likeCard.bind(api),
+      openViewImagePopup: viewImagePopup.open.bind(viewImagePopup)
+    }
+  );
+  return card.generate(user.getUserInfo());
+}
+
+// uploading user information and drawing photo cards from the server
 function loadInitialPage() {
   Promise.all([
-    getUser('me'),
-    getInitialCards()
+    api.getUser(),
+    api.getInitialCards()
   ])
-    .then((values) => {
-      let [userData, cardsData] = values;
-      renderProfileOnPage(userData);
-      renderInitialCards(userData._id, cardsData);
+    .then(([ userData, cardsData ]) => {
+      user = new UserInfo (userSelectors);
+      user.setUserInfo(userData);
+      initialCardList = new Section ({
+        items: cardsData,
+        renderer: createCard
+      }, '.cards__list');
+      initialCardList.renderItems();
     })
     .catch((err) => {
-      console.log(err);
-    })
+      console.error(`Ошибка: ${err}`);
+    });
 }
 
-function renderUserInfo(userId) {
-  getUser(userId)
-  .then((userData) => {
-    renderProfileOnPage(userData);
-  })
-  .catch((err) => {
-    console.log(err);
+// creating a form object and enabling their validation
+function enableValidation (validationSelectors) {
+  const formList = Array.from(document.querySelectorAll(validationSelectors.formSelector));
+  formList.forEach((formElement) => {
+    const validator = new FormValidator(validationSelectors, formElement);
+    const formName = formElement.getAttribute('name');
+    formValidators[formName] = validator;
+    validator.enableValidation();
   })
 }
 
-function renderProfileOnPage(userData) {
-  userName.textContent = userData.name
-  userDescription.textContent = userData.about
-  userAvatar.src = userData.avatar
-}
 // * * * MAIN CODE * * *
 
-// Enabling validation for all forms on the site
+// enabling form validation
 enableValidation(validationSelectors);
 
 // Filling the page with existing data
 loadInitialPage();
 
+// * * * POPUPS * * *
 
-// * * * BUTTON AND FORM LISTENERS * * *
-
-// Edit Profile Form: opening, closing, submitting
-editProfileButton.addEventListener('click', handleEditProfileClick);
-editProfileForm.addEventListener('submit', handleEditProfileFormSubmit);
-editAvatarButton.addEventListener('click', handleEditAvatarClick);
-editAvatarForm.addEventListener('submit', handleEditAvatarFormSubmit);
-
-// Adding Card Form: opening, closing, submitting
-addCardButton.addEventListener('click', function() {
-  handleAddCardClick(popupAddCard);
-});
-addCardForm.addEventListener('submit', function(evt) {
-  evt.preventDefault();
-  handleCardFormSubmit(evt, popupAddCard);
+// Profile Editing popup (info and avatar)
+editProfilePopup.setEventListeners(); // enabling event handlers
+buttons.editProfile.addEventListener('click', (evt) => {
+  formValidators[nameForms.editProfile].resetValidation();
+  const userData = user.getUserInfo();
+  editProfilePopup.setInputValues({ 'user-name': userData.name, 'user-description': userData.about });
+  editProfilePopup.open(); // opening of the popup
 });
 
-// Deleting Card Form
-deleteCardForm.addEventListener('submit', function(evt) {
-  evt.preventDefault();
-  confirmDeletion();
-})
+// change Avatar Popup
+changeAvatarPopup.setEventListeners(); // enabling event handlers
+buttons.changeAvatar.addEventListener('click', (evt) => {
+  formValidators[nameForms.editAvatar].resetValidation();
+  changeAvatarPopup.open(); // opening of the popup
+});
 
-// Setting closing listeners for all popups
-popups.forEach((popup) => {
-  setClosePopupEventListeners(popup);
-})
+// Creating New Card popup
+createCardPopup.setEventListeners(); // enabling event handlers
+buttons.addCard.addEventListener('click', (evt) => {
+  formValidators[nameForms.createCard].resetValidation();
+  createCardPopup.open(); // opening of the popup
+});
+
+// Viewing Image popup
+viewImagePopup.setEventListeners(); // enabling event handlers
+
+// delete Card Popup
+deleteCardPopup.setEventListeners(); // enabling event handlers
